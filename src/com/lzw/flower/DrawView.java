@@ -1,42 +1,60 @@
 package com.lzw.flower;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import com.lzw.flower.Utils.Utils;
+import com.lzw.flower.Utils.Utils;
 
 /**
  * Created by lzw on 14-4-25.
  */
 public class DrawView extends View {
+  public static final int FOREGROUND = 0;
+  public static final int BACKGROUND = 1;
+  public static final int BACKGROUND_COLOR = Color.BLUE;
+  public static final int FOREGROUND_COLOR = Color.RED;
   Canvas cacheCanvas;
   Bitmap cacheBm;
   Paint paint;
   Path path;
   private float preX;
   private float preY;
+  History history;
+  int drawStyle;
 
   public DrawView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    DisplayMetrics metrics=getResources().getDisplayMetrics();
-    int w=metrics.widthPixels;
-    int h=metrics.heightPixels;
-    cacheBm =Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888);
     cacheCanvas=new Canvas();
-    cacheCanvas.setBitmap(cacheBm);
     path=new Path();
     initPaint();
+    clear();
+  }
+
+  public void clear() {
+    cacheBm=getEmptyBitmap(getContext());
+    cacheCanvas.setBitmap(cacheBm);
+    history=new History();
+    history.saveToStack(cacheBm);
+    path.reset();
+    invalidate();
+  }
+
+  public static Bitmap getEmptyBitmap(Context cxt) {
+    DisplayMetrics metrics=cxt.getResources().getDisplayMetrics();
+    int w=metrics.widthPixels;
+    int h=metrics.heightPixels;
+    return Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
   }
 
   private void initPaint() {
     paint=new Paint(Paint.DITHER_FLAG);
     paint.setStyle(Paint.Style.STROKE);
-    paint.setStrokeWidth(5);
+    paint.setStrokeWidth(10);
+    paint.setColor(Color.RED);
     paint.setDither(true);
     paint.setAntiAlias(true);
   }
@@ -53,7 +71,11 @@ public class DrawView extends View {
       path.quadTo(preX,preY,x,y);
       setPrev(event);
     }else if(action==MotionEvent.ACTION_UP){
-      cacheCanvas.drawPath(path,paint);
+      if(updatePaint()){
+        cacheCanvas.drawPath(path,paint);
+        history.saveToStack(cacheBm);
+      }
+      Logger.d(history + "");
       path.reset();
     }
     invalidate();
@@ -70,6 +92,60 @@ public class DrawView extends View {
     super.onDraw(canvas);
     Paint p=new Paint();
     canvas.drawBitmap(cacheBm,0,0,p);
-    canvas.drawPath(path,paint);
+    if(updatePaint()){
+      canvas.drawPath(path,paint);
+    }
+  }
+
+  private boolean updatePaint() {
+    int curPos=history.getCurPos();
+    boolean coundPaint=false;
+    if(curPos==0){
+      paint.setColor(FOREGROUND_COLOR);
+      coundPaint=true;
+    }else if(curPos==1){
+      paint.setColor(BACKGROUND_COLOR);
+      coundPaint=true;
+    }
+    return coundPaint;
+  }
+
+  public Bitmap getCacheBm() {
+    return cacheBm;
+  }
+
+  public void undo() {
+    if(history.canUndo()){
+       Bitmap bm=history.undo();
+       invalidateCanvas(bm);
+    }else{
+      Utils.toast(getContext(), R.string.no_more);
+    }
+  }
+
+  private void invalidateCanvas(Bitmap bm) {
+    cacheBm=bm;
+    cacheCanvas.setBitmap(bm);
+    invalidate();
+  }
+
+  public void redo() {
+    if(history.canRedo()){
+      Bitmap bm=history.redo();
+      invalidateCanvas(bm);
+    }else{
+      Utils.toast(getContext(), R.string.no_more);
+    }
+  }
+
+
+  public void drawBack() {
+    drawStyle = BACKGROUND;
+    paint.setColor(BACKGROUND_COLOR);
+  }
+
+  public void drawFore() {
+    drawStyle = FOREGROUND;
+    paint.setColor(FOREGROUND_COLOR);
   }
 }

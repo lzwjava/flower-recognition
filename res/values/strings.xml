@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">flower</string>
+    <string name="no_more">没有更多了</string>
+    <string name="draw_foreground">画前景</string>
+    <string name="draw_backgroud">画背景</string>
 </resources>

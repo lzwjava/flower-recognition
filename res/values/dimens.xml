@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pic">200dp</dimen>
+    <dimen name="leftMenu">100dp</dimen>
+    <dimen name="right">150dp</dimen>
+    <dimen name="undoRedo">60dp</dimen>
+    <dimen name="ensure">100dp</dimen>
+    <dimen name="leftBottom">100dp</dimen>
+</resources>

@@ -2,20 +2,24 @@ package com.lzw.flower;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.ShutterCallback;
 import android.view.View;
+import com.avos.avoscloud.AVAnalytics;
+import com.lzw.flower.Utils.PathUtils;
 
+import java.io.File;
 import java.io.IOException;
 
-public class MyActivity extends Activity implements View.OnClickListener {
+public class CameraActivity extends Activity implements View.OnClickListener {
   /**
    * Called when the activity is first created.
    */
@@ -28,7 +32,7 @@ public class MyActivity extends Activity implements View.OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);
+    setContentView(R.layout.camera);
     surface= (SurfaceView) findViewById(R.id.surface);
     captureView=findViewById(R.id.capture);
     captureView.setOnClickListener(this);
@@ -36,7 +40,8 @@ public class MyActivity extends Activity implements View.OnClickListener {
     holder.addCallback(new SurfaceCallBack());
     width=surface.getWidth();
     height=surface.getHeight();
-    fromHandDraw();
+    //fromHandDraw();
+    AVAnalytics.trackAppOpened(getIntent());
   }
 
   private void fromHandDraw() {
@@ -86,8 +91,13 @@ public class MyActivity extends Activity implements View.OnClickListener {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
               stopPreview();
-              DrawActivity.imgBytes=data;
-              Intent intent=new Intent(MyActivity.this,DrawActivity.class);
+
+              Intent intent=new Intent(CameraActivity.this,DrawActivity.class);
+              Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+              String path = PathUtils.getCameraPath();
+              BitmapUtils.saveBitmapToPath(bitmap, path);
+              Uri uri=Uri.fromFile(new File(path));
+              intent.setData(uri);
               startActivity(intent);
             }
           });
@@ -115,7 +125,6 @@ public class MyActivity extends Activity implements View.OnClickListener {
 
   private void initCamera() {
     camera=Camera.open(0);
-    camera.setDisplayOrientation(90);
     if(camera!=null){
       Camera.Parameters params=camera.getParameters();
       params.setPreviewSize(width,height);

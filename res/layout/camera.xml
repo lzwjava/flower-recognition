@@ -13,7 +13,7 @@
         android:id="@+id/capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/capture"
+        android:src="@drawable/camera_only"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true" />
 </RelativeLayout>
