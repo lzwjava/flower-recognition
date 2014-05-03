@@ -1,9 +1,11 @@
 package com.lzw.flower;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
+import com.lzw.flower.Utils.Utils;
 
 /**
  * Created by lzw on 14-4-29.
@@ -33,6 +35,6 @@ public class HelpBtn extends ImageButton implements View.OnClickListener {
 
   @Override
   public void onClick(View v) {
-
+    Utils.alertDialog((Activity) getContext(),R.string.info);
   }
 }

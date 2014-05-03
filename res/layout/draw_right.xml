@@ -28,12 +28,14 @@
             android:layout_height="@dimen/leftBottom"
             android:visibility="visible">
 
-            <Button
+            <ImageButton
                 android:id="@+id/ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ok"
-                android:layout_gravity="bottom|right" />
+                android:src="@drawable/ok"
+                android:background="@null"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="10dp"/>
         </LinearLayout>
 
     </LinearLayout>

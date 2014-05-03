@@ -3,6 +3,7 @@ package com.lzw.flower.Utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -31,5 +32,16 @@ public class Utils {
     ImageView view=new ImageView(activity);
     view.setImageBitmap(pop);
     new AlertDialog.Builder(activity).setView(view).show();
+  }
+
+  public static void alertDialog(Activity activity, int msgId) {
+    new AlertDialog.Builder(activity).
+        setMessage(activity.getString(msgId)).show();
+  }
+
+  public static void getGalleryPhoto(Activity cxt,int returnCode) {
+    Intent intent = new Intent();
+    intent.setType("image/*").setAction(Intent.ACTION_GET_CONTENT);
+    cxt.startActivityForResult(intent, returnCode);
   }
 }

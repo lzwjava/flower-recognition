@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import com.lzw.flower.Utils.Utils;
 import com.lzw.flower.Utils.Utils;
 
@@ -17,6 +19,8 @@ public class DrawView extends View {
   public static final int BACKGROUND = 1;
   public static final int BACKGROUND_COLOR = Color.BLUE;
   public static final int FOREGROUND_COLOR = Color.RED;
+  public static final int WIDTH = 800;
+  public static final int HEIGHT = 400;
   Canvas cacheCanvas;
   Bitmap cacheBm;
   Paint paint;
@@ -25,17 +29,18 @@ public class DrawView extends View {
   private float preY;
   History history;
   int drawStyle;
+  Bitmap originBitmap;
 
   public DrawView(Context context, AttributeSet attrs) {
     super(context, attrs);
     cacheCanvas=new Canvas();
     path=new Path();
     initPaint();
-    clear();
+    clear(null);
   }
 
-  public void clear() {
-    cacheBm=getEmptyBitmap(getContext());
+  public void clear(ImageView img) {
+    cacheBm=getEmptyBitmap(getContext(), WIDTH, HEIGHT);
     cacheCanvas.setBitmap(cacheBm);
     history=new History();
     history.saveToStack(cacheBm);
@@ -43,10 +48,16 @@ public class DrawView extends View {
     invalidate();
   }
 
-  public static Bitmap getEmptyBitmap(Context cxt) {
-    DisplayMetrics metrics=cxt.getResources().getDisplayMetrics();
-    int w=metrics.widthPixels;
-    int h=metrics.heightPixels;
+  public Bitmap getOriginBitmap() {
+    return originBitmap;
+  }
+
+  public void setOriginBitmap(Bitmap originBitmap,ImageView img) {
+    this.originBitmap=originBitmap;
+    clear(img);
+  }
+
+  public static Bitmap getEmptyBitmap(Context cxt,int w,int h) {
     return Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
   }
 
@@ -75,7 +86,6 @@ public class DrawView extends View {
         cacheCanvas.drawPath(path,paint);
         history.saveToStack(cacheBm);
       }
-      Logger.d(history + "");
       path.reset();
     }
     invalidate();
@@ -91,7 +101,9 @@ public class DrawView extends View {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
     Paint p=new Paint();
-    canvas.drawBitmap(cacheBm,0,0,p);
+    if(cacheBm!=null){
+      canvas.drawBitmap(cacheBm,0,0,p);
+    }
     if(updatePaint()){
       canvas.drawPath(path,paint);
     }

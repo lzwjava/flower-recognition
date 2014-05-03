@@ -20,6 +20,7 @@ public class ResultFragment extends Fragment {
   View flowerListLayout;
   ListView flowerList;
   List<Data> datas;
+  View resultNo;
   public ResultFragment(List<Data> datas) {
     this.datas=datas;
   }
@@ -35,5 +36,7 @@ public class ResultFragment extends Fragment {
     flowerListLayout=getView().findViewById(R.id.flowerListLayout);
     flowerList= (ListView) flowerListLayout.findViewById(R.id.flowerList);
     flowerList.setAdapter(new FlowerAdapter(getActivity(),datas));
+    resultNo=getView().findViewById(R.id.resultNo);
+    resultNo.setOnClickListener((View.OnClickListener) getActivity());
   }
 }

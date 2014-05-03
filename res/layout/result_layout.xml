@@ -5,5 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/recogOkLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:layout_marginBottom="10dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/resultNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/no"
+            android:layout_weight="1"
+            android:background="@null" />
+    </LinearLayout>
+
     <include layout="@layout/image_list" />
 </LinearLayout>

@@ -26,4 +26,8 @@ public class PathUtils {
   public static String getCameraPath(){
     return getAppDir()+"tmp";
   }
+
+  public static String getCropPath() {
+    return getAppDir()+"crop";
+  }
 }
