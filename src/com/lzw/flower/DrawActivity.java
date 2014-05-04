@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +14,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,17 +23,19 @@ import com.lzw.flower.Utils.Utils;
 import com.lzw.flower.fragment.DrawFragment;
 import com.lzw.flower.fragment.RecogFragment;
 import com.lzw.flower.fragment.ResultFragment;
-import com.lzw.flower.fragment.WatiFragment;
+import com.lzw.flower.fragment.WaitFragment;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class DrawActivity extends Activity implements View.OnClickListener {
-
-  public static final int GOT_DATA = 0;
   public static final int CAMERA_RESULT = 1;
   public static final int CROP_RESULT = 2;
+
+  public static final int DRAW_FRAGMENT = 0;
+  public static final int RECOG_FRAGMENT = 1;
+  public static final int RESULT_FRAGMENT = 2;
   ImageView imgView;
   Button okBtn;
   public static byte[] imgBytes;
@@ -45,7 +47,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   View dir, clear;
   public static final int IMAGE_RESULT = 0;
   String cropPath;
-
+  Tooltip toolTip;
+  int curFragment=-1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     dir = findViewById(R.id.dir);
     dir.setOnClickListener(this);
     clear.setOnClickListener(this);
-    if (App.debug) {
+    setSize();
+    if (App.debug==false) {
       originImg = BitmapFactory.decodeFile(imgPath);
     } else {
       Intent intent = getIntent();
@@ -67,15 +71,49 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       if (uri != null) {
         setImageByUri(uri, 0);
       } else {
-        Uri path = Uri.parse("android.resource://com.lzw.flower/" + R.drawable.flower_water);
-        setImageByUri(path, 0);
+        //Uri path = Uri.parse("android.resource://com.lzw.flower/"
+        // + R.drawable.flower_water);
+        Bitmap bitmap=BitmapFactory.decodeResource(getResources(),R.drawable.flower_water);
+        String imgPath=PathUtils.getCameraPath();
+        BitmapUtils.saveBitmapToPath(bitmap,imgPath);
+        Uri uri1=Uri.fromFile(new File(imgPath));
+        setImageByUri(uri1, 0);
       }
     }
+    showDrawFragment();
+    toolTip=new Tooltip(this);
+    if(App.debug){
+      recogOk();
+    }
+  }
+
+  private void showDrawFragment() {
+    curFragment= DRAW_FRAGMENT;
     showFragment(new DrawFragment());
   }
 
+  private void setSize() {
+    setWholeSize();
+    setViewSize(imgView);
+    setViewSize(drawView);
+  }
+
+  private void setWholeSize() {
+    int width = getResources().getDimensionPixelSize(R.dimen.draw_width);
+    int height=getResources().getDimensionPixelSize(R.dimen.draw_height);
+    App.drawWidth=width;
+    App.drawHeight=height;
+  }
+
+  private void setViewSize(View v) {
+    ViewGroup.LayoutParams lp = v.getLayoutParams();
+    lp.width=App.drawWidth;
+    lp.height=App.drawHeight;
+    v.setLayoutParams(lp);
+  }
+
   private void setImageByUri(final Uri uri, final float angle) {
-    handler.postDelayed(new Runnable() {
+    new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
         Bitmap bitmap = null;
@@ -89,10 +127,18 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         int originW,originH;
         originW=bitmap.getWidth();
         originH=bitmap.getHeight();
-        if(originW!=800 || originH!=400){
-          Crop.startPhotoCrop(DrawActivity.this,uri, cropPath, CROP_RESULT);
-          return;
+        if(originW!=App.drawWidth || originH!=App.drawHeight){
+          int originRadio=(int)(originW*1.0f/originH);
+          int radio=(int)(App.drawWidth*1.0f/App.drawHeight);
+          if(originRadio==radio){
+            bitmap=Bitmap.createScaledBitmap(bitmap,App.drawWidth,App.drawHeight,false);
+          }else{
+            Crop.startPhotoCrop(DrawActivity.this,uri, cropPath, CROP_RESULT);
+            return;
+          }
         }
+        ImageLoader imageLoader=ImageLoader.getInstance();
+        imageLoader.addBitmapToMemoryCache("origin", bitmap);
         originImg=bitmap;
         imgView.setImageBitmap(bitmap);
         int w = imgView.getWidth();
@@ -105,13 +151,6 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     }, 500);
   }
 
-  public static Bitmap rotateBitmap(Bitmap source, float angle) {
-    Matrix matrix = new Matrix();
-    matrix.postRotate(angle);
-    return Bitmap.createBitmap(source, 0, 0,
-        source.getWidth(), source.getHeight(), matrix, true);
-  }
-
   private void showFragment(Fragment fragment) {
     FragmentTransaction trans = getFragmentManager().beginTransaction();
     trans.replace(R.id.rightLayout, fragment);
@@ -122,8 +161,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.ok) {
-      //showFragment(new RecogFragment());
-      saveBitmap();
+      if(drawView.isDrawFinish()){
+        showRecogFragment();
+      }else{
+        Utils.alertDialog(this,R.string.please_draw_finish);
+      }
+      //saveBitmap();
     } else if (id == R.id.recogOk) {
       recogOk();
     } else if (id == R.id.recogNo) {
@@ -131,15 +174,24 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     } else if (id == R.id.dir) {
       Utils.getGalleryPhoto(this, IMAGE_RESULT);
     } else if (id == R.id.clear) {
-      //clearEverything();
+      clearEverything();
     } else if (id == R.id.resultNo) {
-      showFragment(new RecogFragment());
+      showRecogFragment();
+    }else if(id==R.id.help){
+      if(curFragment==DRAW_FRAGMENT){
+        toolTip.start();
+      }
     }
+  }
+
+  private void showRecogFragment() {
+    curFragment= RECOG_FRAGMENT;
+    showFragment(new RecogFragment());
   }
 
   public void clearEverything() {
     drawView.clear(imgView);
-    showFragment(new DrawFragment());
+    showDrawFragment();
   }
 
   public void saveBitmap() {
@@ -173,29 +225,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     showFragment(new DrawFragment());
   }
 
-  Handler handler = new Handler(new Handler.Callback() {
-    @Override
-    public boolean handleMessage(Message msg) {
-      int what = msg.what;
-      boolean res = false;
-      if (what == GOT_DATA) {
-        List<Data> datas = (List<Data>) msg.obj;
-        showFragment(new ResultFragment(datas));
-        res = true;
-      }
-      return res;
-    }
-  });
-
   public void undo(View v) {
     drawView.undo();
   }
 
   public void redo(View v) {
     drawView.redo();
-  }
-
-  public void crop(View v) {
   }
 
   public void settings(View v) {
@@ -221,22 +256,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   public void recogOk() {
-    showFragment(new WatiFragment());
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        List<Data> datas = Web.getDatas();
-        try {
-          Web.downloadBitmaps(datas);
-          Message msg = handler.obtainMessage();
-          msg.what = GOT_DATA;
-          msg.obj = datas;
-          handler.sendMessage(msg);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }).start();
+    Intent intent=new Intent(this,ResultActivity.class);
+    startActivity(intent);
   }
 
   @Override
@@ -259,4 +280,5 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       }
     }
   }
+
 }

@@ -37,25 +37,39 @@
             android:id="@+id/recogOkLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/leftBottom"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:visibility="visible"
             android:gravity="center">
 
-            <ImageButton
-                android:id="@+id/recogOk"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ok"
-                android:layout_weight="1"
-                android:background="@null" />
+                android:text="@string/recogTips"
+                android:textColor="@color/black"
+                android:layout_marginBottom="5dp"/>
 
-            <ImageButton
-                android:id="@+id/recogNo"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/no"
-                android:layout_weight="1"
-                android:background="@null" />
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/recogOk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ok"
+                    android:layout_weight="1"
+                    android:background="@null" />
+
+                <ImageButton
+                    android:id="@+id/recogNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/no"
+                    android:layout_weight="1"
+                    android:background="@null" />
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

@@ -10,22 +10,24 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:background="@drawable/info"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
+            <TextView
+                android:id="@+id/infoView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/info"
+                android:textColor="@color/black"
                 android:layout_gravity="center" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/drawOk"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/leftBottom"
+            android:layout_height="wrap_content"
             android:visibility="visible">
 
             <ImageButton

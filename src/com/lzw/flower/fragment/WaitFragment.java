@@ -10,7 +10,7 @@ import com.lzw.flower.R;
 /**
  * Created by lzw on 14-4-30.
  */
-public class WatiFragment extends Fragment {
+public class WaitFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.wait_layout, container, false);

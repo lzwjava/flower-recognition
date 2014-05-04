@@ -29,9 +29,12 @@ public class HelpBtn extends ImageButton implements View.OnClickListener {
 
 
   private void init() {
-    setOnClickListener(this);
+    Context cxt = getContext();
+    if(isInEditMode()){
+      return;
+    }
+    setOnClickListener((DrawActivity) cxt);
   }
-
 
   @Override
   public void onClick(View v) {

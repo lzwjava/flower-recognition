@@ -19,8 +19,8 @@ public class DrawView extends View {
   public static final int BACKGROUND = 1;
   public static final int BACKGROUND_COLOR = Color.BLUE;
   public static final int FOREGROUND_COLOR = Color.RED;
-  public static final int WIDTH = 800;
-  public static final int HEIGHT = 400;
+  public static final int WIDTH = App.drawWidth;
+  public static final int HEIGHT = App.drawHeight;
   Canvas cacheCanvas;
   Bitmap cacheBm;
   Paint paint;
@@ -65,7 +65,7 @@ public class DrawView extends View {
     paint=new Paint(Paint.DITHER_FLAG);
     paint.setStyle(Paint.Style.STROKE);
     paint.setStrokeWidth(10);
-    paint.setColor(Color.RED);
+    paint.setColor(Color.BLUE);
     paint.setDither(true);
     paint.setAntiAlias(true);
   }
@@ -113,13 +113,18 @@ public class DrawView extends View {
     int curPos=history.getCurPos();
     boolean coundPaint=false;
     if(curPos==0){
-      paint.setColor(FOREGROUND_COLOR);
+      paint.setColor(BACKGROUND_COLOR);
       coundPaint=true;
     }else if(curPos==1){
-      paint.setColor(BACKGROUND_COLOR);
+      paint.setColor(FOREGROUND_COLOR);
       coundPaint=true;
     }
     return coundPaint;
+  }
+
+  public boolean isDrawFinish(){
+    int curPos = history.getCurPos();
+    return curPos==2;
   }
 
   public Bitmap getCacheBm() {

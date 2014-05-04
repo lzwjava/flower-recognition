@@ -8,6 +8,14 @@
 
     <ListView
         android:id="@+id/flowerList"
+        android:divider="@null"
+        android:dividerHeight="16dp"
+        android:background="#e2e2e2"
+        android:fadingEdge="none"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:padding="16dp"
+        android:layout_height="wrap_content"
+        android:scrollbarStyle="outsideOverlay">
+
+    </ListView>
 </LinearLayout>

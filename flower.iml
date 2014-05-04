@@ -20,6 +20,8 @@
     <orderEntry type="library" name="android-async-http-1.4.4-fix" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="library" name="fastjson" level="project" />
+    <orderEntry type="module" module-name="supertooltips_library" />
+    <orderEntry type="module" module-name="listview_library" />
   </component>
 </module>
 

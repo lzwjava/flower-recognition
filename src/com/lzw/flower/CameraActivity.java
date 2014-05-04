@@ -29,7 +29,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
   SurfaceHolder holder;
   View captureView;
   boolean isPreview;
-  String tmpPath;
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

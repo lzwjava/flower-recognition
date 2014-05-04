@@ -16,10 +16,16 @@ public class Crop {
       resultCode) {
     Intent intent = new Intent("com.android.camera.action.CROP");
     intent.setDataAndType(uri, "image/*");
-    intent.putExtra("crop", "true").putExtra("aspectX", 2).
-        putExtra("aspectY", 1).putExtra("scale", true).putExtra("outputX",800)
-        .putExtra("outputY",400).
+    int w=App.drawWidth;
+    int h=App.drawHeight;
+    int w1=w/100;
+    int h1=h/100;
+    intent.putExtra("crop", "true").putExtra("aspectX", w1).
+        putExtra("aspectY", h1).putExtra("scale", true)
+        .putExtra("outputX",w).putExtra("outputY",h).
         putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+    intent.putExtra("noFaceDetection", true);
+    intent.putExtra("return-data", false);
     Uri uri1 = Uri.fromFile(new File(outputPath));
     intent.putExtra(MediaStore.EXTRA_OUTPUT, uri1);
     cxt.startActivityForResult(intent, resultCode);

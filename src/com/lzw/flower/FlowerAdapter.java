@@ -8,17 +8,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by lzw on 14-4-30.
  */
 public class FlowerAdapter extends BaseAdapter {
-  List<Data> datas;
+  List<Data> datas=new ArrayList<Data>();
   Context cxt;
 
   public FlowerAdapter(Context cxt,List<Data> datas) {
     this.cxt=cxt;
+    this.datas = datas;
+  }
+
+  public void setDatas(List<Data> datas) {
     this.datas = datas;
   }
 
