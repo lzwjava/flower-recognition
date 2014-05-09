@@ -1,0 +1,2 @@
+include ':libraryListViewAnimations', ':suppertooltips', ':supertooltips', ':lib', ':nineoldandroids'
+include ':flowerrecognition'

@@ -1,0 +1,13 @@
+apply plugin: 'java'
+
+dependencies {
+    compile files('avoscloud/android-async-http-1.4.4-fix.jar')
+    compile files('avoscloud/avoscloud-v2.5.2.1.jar')
+    compile files('avoscloud/avospush-v2.5.2.1.jar')
+    compile files('avoscloud/avossns-v2.5.2.1.jar')
+    compile files('avoscloud/avosstatistics-v2.5.2.1.jar')
+    compile files('avoscloud/fastjson.jar')
+    compile files('avoscloud/httpmime-4.2.4.jar')
+    compile files('avoscloud/qq.sdk.1.6.1.jar')
+    compile files('avoscloud/weibo.sdk.android.sso.jar')
+}

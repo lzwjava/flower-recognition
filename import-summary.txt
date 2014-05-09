@@ -1,0 +1,64 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+From Library-ListViewAnimations:
+* build.gradle
+* gradle.properties
+* library.iml
+* pom.xml
+* tests\
+* tests\java\
+* tests\java\com\
+* tests\java\com\nhaarman\
+* tests\java\com\nhaarman\listviewanimations\
+* tests\java\com\nhaarman\listviewanimations\itemmanipulation\
+* tests\java\com\nhaarman\listviewanimations\itemmanipulation\tests\
+* tests\java\com\nhaarman\listviewanimations\itemmanipulation\tests\InsertQueueTest.java
+* tests\java\com\nhaarman\listviewanimations\itemmanipulation\tests\matchers\
+* tests\java\com\nhaarman\listviewanimations\itemmanipulation\tests\matchers\Matchers.java
+* tests\tests.iml
+From flower-recognition:
+* README
+* ant.properties
+* build.xml
+* flower.apk
+* flower.iml
+* proguard-project.txt
+* 项目依赖.png
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+In Library-ListViewAnimations:
+* AndroidManifest.xml => libraryListViewAnimations\src\main\AndroidManifest.xml
+* libs\nineoldandroids-2.4.0.jar => libraryListViewAnimations\libs\nineoldandroids-2.4.0.jar
+* libs\stickylistheaders_lib.jar => libraryListViewAnimations\libs\stickylistheaders_lib.jar
+* lint.xml => libraryListViewAnimations\lint.xml
+* src\ => libraryListViewAnimations\src\main\java\
+In flower-recognition:
+* AndroidManifest.xml => flowerrecognition\src\main\AndroidManifest.xml
+* res\ => flowerrecognition\src\main\res\
+* src\ => flowerrecognition\src\main\java\
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

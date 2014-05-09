@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="avosstatistics-v2.5.2.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/flowerrecognition/libs/avosstatistics-v2.5.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

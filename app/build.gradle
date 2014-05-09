@@ -1,0 +1,30 @@
+apply plugin: 'android'
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.0.3'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 14
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/android-async-http-1.4.4-fix.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/avoscloud-v2.5.2.1.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/avospush-v2.5.2.1.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/avossns-v2.5.2.1.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/avosstatistics-v2.5.2.1.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/fastjson.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/httpmime-4.2.4.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/qq.sdk.1.6.1.jar')
+    compile files('G:/MyCode/GitHub/flower-recognition/libs/avos/weibo.sdk.android.sso.jar')
+    compile project(':supertooltips')
+}

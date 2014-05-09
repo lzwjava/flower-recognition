@@ -1,0 +1,36 @@
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.0.3'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 16
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    compile project(':libraryListViewAnimations')
+    compile project(':supertooltips')
+    compile files('libs/android-async-http-1.4.4-fix.jar')
+    compile files('libs/avoscloud-v2.5.2.1.jar')
+    compile files('libs/avospush-v2.5.2.1.jar')
+    compile files('libs/avossns-v2.5.2.1.jar')
+    compile files('libs/avosstatistics-v2.5.2.1.jar')
+    compile files('libs/fastjson.jar')
+    compile files('libs/httpmime-4.2.4.jar')
+    compile files('libs/qq.sdk.1.6.1.jar')
+    compile files('libs/weibo.sdk.android.sso.jar')
+}

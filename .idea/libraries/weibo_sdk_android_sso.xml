@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="weibo.sdk.android.sso">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/flowerrecognition/libs/weibo.sdk.android.sso.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
