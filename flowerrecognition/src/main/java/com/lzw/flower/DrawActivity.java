@@ -8,20 +8,25 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-
+import com.avos.avoscloud.AVFile;
 import com.lzw.flower.Utils.PathUtils;
 import com.lzw.flower.Utils.Utils;
 import com.lzw.flower.fragment.DrawFragment;
 import com.lzw.flower.fragment.RecogFragment;
+import com.lzw.flower.fragment.WaitFragment;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +38,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int DRAW_FRAGMENT = 0;
   public static final int RECOG_FRAGMENT = 1;
   public static final int RESULT_FRAGMENT = 2;
+  public static final int WAIT_FRAGMENT = 3;
   ImageView imgView;
   Button okBtn;
   public static byte[] imgBytes;
@@ -45,13 +51,14 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int IMAGE_RESULT = 0;
   String cropPath;
   Tooltip toolTip;
-  int curFragment=-1;
+  int curFragment = -1;
+  int serverId = -1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     instance = this;
-    cropPath =PathUtils.getCropPath();
+    cropPath = PathUtils.getCropPath();
     setContentView(R.layout.draw_layout);
     imgView = (ImageView) findViewById(R.id.img);
     drawView = (DrawView) findViewById(R.id.drawView);
@@ -60,7 +67,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     dir.setOnClickListener(this);
     clear.setOnClickListener(this);
     setSize();
-    if (App.debug==false) {
+    if (App.debug == false) {
       originImg = BitmapFactory.decodeFile(imgPath);
     } else {
       Intent intent = getIntent();
@@ -70,22 +77,22 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       } else {
         //Uri path = Uri.parse("android.resource://com.lzw.flower/"
         // + R.drawable.flower_water);
-        Bitmap bitmap=BitmapFactory.decodeResource(getResources(),R.drawable.flower_water);
-        String imgPath=PathUtils.getCameraPath();
-        BitmapUtils.saveBitmapToPath(bitmap,imgPath);
-        Uri uri1=Uri.fromFile(new File(imgPath));
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.flower_water);
+        String imgPath = PathUtils.getCameraPath();
+        BitmapUtils.saveBitmapToPath(bitmap, imgPath);
+        Uri uri1 = Uri.fromFile(new File(imgPath));
         setImageByUri(uri1, 0);
       }
     }
     showDrawFragment();
-    toolTip=new Tooltip(this);
-    if(App.debug){
+    toolTip = new Tooltip(this);
+    if (App.debug) {
       //recogOk();
     }
   }
 
   private void showDrawFragment() {
-    curFragment= DRAW_FRAGMENT;
+    curFragment = DRAW_FRAGMENT;
     showFragment(new DrawFragment());
   }
 
@@ -97,15 +104,15 @@ public class DrawActivity extends Activity implements View.OnClickListener {
 
   private void setWholeSize() {
     int width = getResources().getDimensionPixelSize(R.dimen.draw_width);
-    int height=getResources().getDimensionPixelSize(R.dimen.draw_height);
-    App.drawWidth=width;
-    App.drawHeight=height;
+    int height = getResources().getDimensionPixelSize(R.dimen.draw_height);
+    App.drawWidth = width;
+    App.drawHeight = height;
   }
 
   private void setViewSize(View v) {
     ViewGroup.LayoutParams lp = v.getLayoutParams();
-    lp.width=App.drawWidth;
-    lp.height=App.drawHeight;
+    lp.width = App.drawWidth;
+    lp.height = App.drawHeight;
     v.setLayoutParams(lp);
   }
 
@@ -121,29 +128,30 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         } catch (IOException e) {
           e.printStackTrace();
         }
-        int originW,originH;
-        originW=bitmap.getWidth();
-        originH=bitmap.getHeight();
-        if(originW!=App.drawWidth || originH!=App.drawHeight){
-          int originRadio=(int)(originW*1.0f/originH);
-          int radio=(int)(App.drawWidth*1.0f/App.drawHeight);
-          if(originRadio==radio){
-            bitmap=Bitmap.createScaledBitmap(bitmap,App.drawWidth,App.drawHeight,false);
-          }else{
-            Crop.startPhotoCrop(DrawActivity.this,uri, cropPath, CROP_RESULT);
+        int originW, originH;
+        originW = bitmap.getWidth();
+        originH = bitmap.getHeight();
+        if (originW != App.drawWidth || originH != App.drawHeight) {
+          int originRadio = (int) (originW * 1.0f / originH);
+          int radio = (int) (App.drawWidth * 1.0f / App.drawHeight);
+          if (originRadio == radio) {
+            bitmap = Bitmap.createScaledBitmap(bitmap, App.drawWidth, App.drawHeight, false);
+          } else {
+            Crop.startPhotoCrop(DrawActivity.this, uri, cropPath, CROP_RESULT);
             return;
           }
         }
-        ImageLoader imageLoader=ImageLoader.getInstance();
+        ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.addBitmapToMemoryCache("origin", bitmap);
-        originImg=bitmap;
+        originImg = bitmap;
+        serverId = -1;
         imgView.setImageBitmap(bitmap);
         int w = imgView.getWidth();
         int h = imgView.getHeight();
-        Logger.d("imageview w=%d h=%d",w,h);
-        Logger.d("origin w=%d h=%d",originImg.getWidth(),originImg.getHeight());
+        Logger.d("imageview w=%d h=%d", w, h);
+        Logger.d("origin w=%d h=%d", originImg.getWidth(), originImg.getHeight());
         drawView.setOriginBitmap(originImg, imgView);
-        Logger.d("drawview w=%d h=%d",drawView.getWidth(),drawView.getHeight());
+        Logger.d("drawview w=%d h=%d", drawView.getWidth(), drawView.getHeight());
       }
     }, 500);
   }
@@ -158,12 +166,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.ok) {
-      if(drawView.isDrawFinish()){
-        showRecogFragment();
-      }else{
-        Utils.alertDialog(this,R.string.please_draw_finish);
+      if (drawView.isDrawFinish()) {
+        //showRecogFragment();
+        saveBitmap();
+      } else {
+        Utils.alertDialog(this, R.string.please_draw_finish);
       }
-      //saveBitmap();
     } else if (id == R.id.recogOk) {
       recogOk();
     } else if (id == R.id.recogNo) {
@@ -174,15 +182,15 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       clearEverything();
     } else if (id == R.id.resultNo) {
       showRecogFragment();
-    }else if(id==R.id.help){
-      if(curFragment==DRAW_FRAGMENT){
+    } else if (id == R.id.help) {
+      if (curFragment == DRAW_FRAGMENT) {
         toolTip.start();
       }
     }
   }
 
   private void showRecogFragment() {
-    curFragment= RECOG_FRAGMENT;
+    curFragment = RECOG_FRAGMENT;
     showFragment(new RecogFragment());
   }
 
@@ -192,11 +200,66 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   public void saveBitmap() {
-    Bitmap cachebm = drawView.getCacheBm();
-    showDrawPicture(cachebm);
+    Bitmap handBitmap = drawView.getCacheBm();
+    Bitmap originBitmap = drawView.getOriginBitmap();
+    //showDrawPicture(handBitmap,originBitmap);
+    saveBitmapToFile(handBitmap, originBitmap);
   }
 
-  public void showDrawPicture(Bitmap tmpBm) {
+  private void saveBitmapToFile(Bitmap handBitmap, Bitmap originBitmap) {
+    final String originPath = PathUtils.getOriginPath();
+    BitmapUtils.saveBitmapToPath(originBitmap, originPath);
+    final String handPath = PathUtils.getHandPath();
+    BitmapUtils.saveBitmapToPath(handBitmap, handPath);
+    final String baseUrl = "http://127.0.0.1:8083";
+    new AsyncTask<Void, Void, Void>() {
+      boolean res;
+
+      @Override
+      protected void onPreExecute() {
+        super.onPreExecute();
+        showWaitFragment();
+      }
+
+      @Override
+      protected Void doInBackground(Void... params) {
+        try {
+          AVFile origin = AVFile.withAbsoluteLocalPath("origin.png", originPath);
+          origin.save();
+          //Thread.sleep(1000);
+          AVFile hand = AVFile.withAbsoluteLocalPath("hand.png", handPath);
+          hand.save();
+          String originUrl = origin.getUrl();
+          String handUrl = hand.getUrl();
+          HttpClient client = new DefaultHttpClient();
+          String content = Server.doPost(client, baseUrl, "origin", originUrl, "hand", handUrl, "id", serverId + "");
+          Logger.d(content+"");
+          res = true;
+        } catch (Exception e) {
+          res = false;
+          e.printStackTrace();
+        }
+        return null;
+      }
+
+      @Override
+      protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        if (res) {
+          showRecogFragment();
+        } else {
+
+        }
+      }
+    }.execute();
+  }
+
+  private void showWaitFragment() {
+    curFragment = WAIT_FRAGMENT;
+    showFragment(new WaitFragment());
+  }
+
+  public void showDrawPicture(Bitmap handBitmap, Bitmap originBitmap) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     Bitmap bm = drawView.getCacheBm();
     LayoutInflater inflater = LayoutInflater.from(this);
@@ -204,18 +267,11 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     ImageView originImgView = (ImageView) dialog.findViewById(R.id.origin),
         handImg = (ImageView) dialog.findViewById(R.id.hand),
         hand1Img = (ImageView) dialog.findViewById(R.id.hand1);
-    Bitmap imageViewBitmap = drawView.getOriginBitmap();
-    //Bitmap imageViewBitmap=Bitmap.createBitmap(imageViewBitmap,0,0,tmpBm.getWidth(),tmpBm.getHeight());
-
-    originImgView.setImageBitmap(imageViewBitmap);
-    handImg.setImageBitmap(tmpBm);
-    //Bitmap conBm = BitmapUtils.toGreyImg(bm);
-    hand1Img.setImageBitmap(tmpBm);
+    originImgView.setImageBitmap(originBitmap);
+    handImg.setImageBitmap(handBitmap);
+    hand1Img.setImageBitmap(handBitmap);
     builder.setView(dialog);
     builder.show();
-
-    BitmapUtils.saveBitmapToPath(imageViewBitmap, "/mnt/sdcard/1.png");
-    BitmapUtils.saveBitmapToPath(tmpBm, "/mnt/sdcard/2.png");
   }
 
   private void recogNo() {
@@ -253,7 +309,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   public void recogOk() {
-    Intent intent=new Intent(this,ResultActivity.class);
+    Intent intent = new Intent(this, ResultActivity.class);
     startActivity(intent);
   }
 
@@ -271,8 +327,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
           setImageByUri(getCameraUri(), 0);
           break;
         case CROP_RESULT:
-          Uri uri=Uri.fromFile(new File(cropPath));
-          setImageByUri(uri,0);
+          Uri uri = Uri.fromFile(new File(cropPath));
+          setImageByUri(uri, 0);
           break;
       }
     }

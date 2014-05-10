@@ -1,16 +1,14 @@
 package com.lzw.flower;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import com.lzw.flower.Utils.Utils;
 import com.lzw.flower.Utils.Utils;
 
 /**

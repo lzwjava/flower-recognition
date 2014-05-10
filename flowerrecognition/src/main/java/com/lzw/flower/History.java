@@ -1,8 +1,11 @@
 package com.lzw.flower;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+
+import com.lzw.flower.Utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

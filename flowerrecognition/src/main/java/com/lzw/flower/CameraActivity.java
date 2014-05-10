@@ -5,15 +5,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.hardware.Camera;
-import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.PictureCallback;
 import android.view.View;
-
 import com.avos.avoscloud.AVAnalytics;
 import com.lzw.flower.Utils.PathUtils;
 

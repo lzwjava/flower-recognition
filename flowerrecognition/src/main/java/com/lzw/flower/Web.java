@@ -2,7 +2,6 @@ package com.lzw.flower;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 

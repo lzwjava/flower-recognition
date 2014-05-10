@@ -8,11 +8,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import com.lzw.flower.DrawActivity;
 import com.lzw.flower.R;
 
 /**

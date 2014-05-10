@@ -1,7 +1,6 @@
 package com.lzw.flower;
 
 import android.app.Application;
-
 import com.avos.avoscloud.AVAnalytics;
 import com.avos.avoscloud.AVOSCloud;
 

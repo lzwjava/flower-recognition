@@ -2,6 +2,7 @@ package com.lzw.flower.fragment;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,13 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.lzw.flower.Data;
-import com.lzw.flower.FlowerAdapter;
-import com.lzw.flower.ImageLoader;
-import com.lzw.flower.R;
+import com.lzw.flower.*;
 import com.lzw.flower.Utils.Utils;
-import com.lzw.flower.Web;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 import java.io.IOException;

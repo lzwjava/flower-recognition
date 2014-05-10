@@ -6,10 +6,10 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
-
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
+import com.lzw.flower.R;
 
 /**
  * Created by lzw on 14-5-4.
