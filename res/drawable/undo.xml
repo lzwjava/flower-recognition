@@ -2,5 +2,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true" android:drawable="@drawable/undo_pressed"></item>
-    <item android:drawable="@drawable/undo_normal"></item>
+    <item android:state_enabled="true" android:drawable="@drawable/undo_normal"></item>
+    <item android:state_enabled="false" android:drawable="@drawable/undo_disable"></item>
 </selector>

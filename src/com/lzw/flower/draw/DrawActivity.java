@@ -16,15 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.lzw.flower.utils.Crop;
-import com.lzw.flower.base.ImageLoader;
 import com.lzw.flower.R;
-import com.lzw.flower.utils.*;
 import com.lzw.flower.base.App;
+import com.lzw.flower.base.ImageLoader;
 import com.lzw.flower.fragment.RecogFragment;
 import com.lzw.flower.fragment.WaitFragment;
 import com.lzw.flower.material.MaterialActivity;
 import com.lzw.flower.result.ResultActivity;
+import com.lzw.flower.utils.*;
 import com.lzw.flower.web.UploadImage;
 import com.lzw.flower.web.Web;
 import org.json.JSONObject;
@@ -115,33 +114,17 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   void initUndoRedoEnable(){
-    if(drawView==null)
-      throw new NullPointerException("drawView is null");
     drawView.history.setCallBack(new History.CallBack() {
       @Override
       public void onHistoryChanged() {
         setUndoRedoEnable();
       }
     });
-    setUndoRedoEnable();
   }
 
   void setUndoRedoEnable(){
-    setBackByEnable(redoView, drawView.history.canRedo(),
-        R.drawable.redo, R.drawable.redo_pressed);
-    setBackByEnable(undoView,drawView.history.canUndo(),
-        R.drawable.undo,R.drawable.undo_pressed);
-  }
-
-  private void setBackByEnable(ImageView view, boolean enable, int enableId, int disableId) {
-    if(enable){
-      view.setEnabled(true);
-      view.setImageResource(enableId);
-    }else{
-      view.setEnabled(false);
-      view.setImageResource(disableId);
-
-    }
+    redoView.setEnabled(drawView.history.canRedo());
+    undoView.setEnabled(drawView.history.canUndo());
   }
 
   private void showDrawFragment() {
@@ -274,7 +257,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   public void clearEverything() {
-    drawView.clear(originView);
+    drawView.clear();
     showDrawFragment();
   }
 

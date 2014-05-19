@@ -33,13 +33,14 @@ public class DrawView extends View {
     cacheCanvas=new Canvas();
     path=new Path();
     initPaint();
-    clear(null);
+    history=new History();
+    clear();
   }
 
-  public void clear(ImageView img) {
+  public void clear() {
     cacheBm=getEmptyBitmap(getContext(), App.drawWidth, App.drawHeight);
     cacheCanvas.setBitmap(cacheBm);
-    history=new History();
+    history.clear();
     history.saveToStack(cacheBm);
     path.reset();
     invalidate();
@@ -51,7 +52,7 @@ public class DrawView extends View {
 
   public void setOriginBitmap(Bitmap originBitmap,ImageView img) {
     this.originBitmap=originBitmap;
-    clear(img);
+    clear();
   }
 
   public static Bitmap getEmptyBitmap(Context cxt,int w,int h) {
