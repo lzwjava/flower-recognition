@@ -75,15 +75,14 @@ public class DrawView extends View {
     float y=event.getY();
     if(action==MotionEvent.ACTION_DOWN){
       path.moveTo(x,y);
-      setPrev(event);
     }else if(action==MotionEvent.ACTION_MOVE){
-      path.quadTo(preX,preY,x,y);
-      setPrev(event);
+      path.quadTo(preX, preY, x, y);
     }else if(action==MotionEvent.ACTION_UP){
       cacheCanvas.drawPath(path,paint);
       history.saveToStack(cacheBm);
       path.reset();
     }
+    setPrev(event);
     invalidate();
     return true;
   }

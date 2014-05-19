@@ -40,7 +40,7 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
   Activity cxt;
   ImageView showView;
   TextView typeNameView,typeDescView;
-  ImageButton wikiView;
+  View wikiView;
   WikiListener wikiListener;
 
   @Override
@@ -65,7 +65,7 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
     resultNo = getView().findViewById(R.id.resultNo);
     typeNameView= (TextView) getView().findViewById(R.id.typeName);
     typeDescView= (TextView) getView().findViewById(R.id.typeDesc);
-    wikiView.findViewById(R.id.wiki);
+    wikiView=  getView().findViewById(R.id.wiki);
     wikiListener=new WikiListener();
     wikiView.setOnClickListener(wikiListener);
     resultNo.setOnClickListener(this);

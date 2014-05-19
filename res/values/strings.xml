@@ -2,14 +2,14 @@
 <resources>
     <string name="app_name">flower</string>
     <string name="no_more">没有更多了</string>
-    <string name="draw_foreground">画前景</string>
+    <string name="draw_foreground">画花朵</string>
     <string name="draw_backgroud">画背景</string>
-    <string name="info">选好花的照片，画两笔以表示前景背景，点确定便可识别花朵</string>
+    <string name="info">选好花的照片，用两种颜色的笔以表示前景背景，点确定便可识别花朵</string>
     <string name="please_use">请先用</string>
     <string name="draw_back">画背景，再用</string>
     <string name="draw_flower">画花朵</string>
     <string name="dirTip">从手机相册中打开一张花的图片</string>
-    <string name="drawTip">在这里画两笔，以表示背景和花朵</string>
+    <string name="drawTip">在这里涂鸦，以表示背景和花朵</string>
     <string name="okTip">画好了，点这里提取花卉</string>
     <string name="please_draw_finish">亲，没画完哦</string>
     <string name="recogTips">分离得可以的话请点确定来找类似的花卉们</string>
@@ -19,4 +19,5 @@
     <string name="pleaseChooseOneFlower">请选一张心仪的图片</string>
     <string name="server_error">服务器错误</string>
     <string name="origin_flower">原花</string>
+    <string name="drawRect">画矩形</string>
 </resources>

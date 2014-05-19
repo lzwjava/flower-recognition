@@ -38,6 +38,7 @@ public class Web {
   public static String FORE = "fore";
   public static String STATUS_OK = "ok";
   public static String RESULT = "result";
+  public static String RECT="rect";
 
   public static List<FlowerData> getDatas(String jsonStr) {
     List<FlowerData> datas = new ArrayList<FlowerData>();

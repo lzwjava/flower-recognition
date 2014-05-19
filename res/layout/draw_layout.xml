@@ -119,34 +119,50 @@
                     android:src="@drawable/redo"
                     android:background="@null" />
 
-
-                <ImageButton
-                    android:id="@+id/drawBack"
-                    android:layout_width="0dp"
+                <RadioGroup
+                    android:id="@+id/radioRroup"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/pen_blue"
-                    android:scaleType="centerCrop"
-                    android:padding="@dimen/penPadding"
-                    android:background="@null" />
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical">
 
 
-                <ImageButton
-                    android:id="@+id/drawFore"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:scaleType="centerCrop"
-                    android:padding="@dimen/penPadding"
-                    android:src="@drawable/pen_red"
-                    android:background="@null" />
+                    <RadioButton
+                        android:id="@+id/drawRectBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/radioText"
+                        android:text="@string/drawRect" />
+
+
+                    <RadioButton
+                        android:id="@+id/drawBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/radioText"
+                        android:checked="true"
+                        android:text="@string/draw_backgroud" />
+
+                    <RadioButton
+                        android:id="@+id/drawFore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/radioText"
+                        android:text="@string/draw_foreground" />
+
+                </RadioGroup>
+
             </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginTop="0dp">
+                android:layout_marginTop="0dp"
+                android:background="@drawable/card_background_white"
+                android:padding="10dp"
+                android:layout_margin="3dp">
 
                 <ImageView
                     android:id="@+id/img"
@@ -155,6 +171,13 @@
                     android:src="@drawable/flower_water"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter" />
+
+
+                <com.lzw.flower.draw.DrawRectView
+                    android:id="@+id/drawRectView"
+                    android:layout_width="@dimen/draw_width"
+                    android:layout_height="@dimen/draw_height"
+                    android:layout_gravity="center" />
 
                 <com.lzw.flower.draw.DrawView
                     android:id="@+id/drawView"
@@ -167,7 +190,7 @@
                     android:background="@android:color/holo_orange_dark"
                     android:layout_width="1px"
                     android:layout_height="1px"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center" />
             </FrameLayout>
         </LinearLayout>
 

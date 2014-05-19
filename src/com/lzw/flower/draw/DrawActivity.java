@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import com.lzw.flower.R;
 import com.lzw.flower.base.App;
 import com.lzw.flower.base.ImageLoader;
@@ -41,23 +43,24 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int WAIT_FRAGMENT = 3;
   public static final int MATERIAL_RESULT = 4;
   public static final String RESULT_JSON = "resultJson";
-  String ip="172.19.32.115";
-  final String baseUrl = "http://"+ip+":8080/file";
+  String ip = "172.19.32.115";
+  final String baseUrl = "http://" + ip + ":8080/file";
 
   ImageView originView;
   DrawView drawView;
   Bitmap originImg;
   String imgPath = "/mnt/sdcard/titan.jpg";
   public static DrawActivity instance;
-  View dir, clear,  cameraView,materialView;
+  View dir, clear, cameraView, materialView, drawRectBtn;
   ImageView undoView, redoView;
-  View drawForeView,drawBackView;
   public static final int IMAGE_RESULT = 0;
   String cropPath;
   Tooltip toolTip;
   int curFragment = -1;
   int serverId = -1;
   private Bitmap resultBitmap;
+  DrawRectView drawRectView;
+  private RadioGroup radioGroup;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +98,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
 
   private void goResult() {
     Intent intent = new Intent(DrawActivity.this, ResultActivity.class);
-    intent.putExtra(RESULT_JSON,App.json);
+    intent.putExtra(RESULT_JSON, App.json);
     startActivity(intent);
   }
 
@@ -104,35 +107,63 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     drawView = (DrawView) findViewById(R.id.drawView);
     undoView = (ImageView) findViewById(R.id.undo);
     redoView = (ImageView) findViewById(R.id.redo);
+    drawRectView = (DrawRectView) findViewById(R.id.drawRectView);
     clear = findViewById(R.id.clear);
     dir = findViewById(R.id.dir);
-    drawForeView=findViewById(R.id.drawFore);
-    drawBackView=findViewById(R.id.drawBack);
-    materialView=findViewById(R.id.material);
+    materialView = findViewById(R.id.material);
     cameraView = findViewById(R.id.camera);
+
     dir.setOnClickListener(this);
-    drawForeView.setOnClickListener(this);
-    drawBackView.setOnClickListener(this);
     materialView.setOnClickListener(this);
     undoView.setOnClickListener(this);
     redoView.setOnClickListener(this);
     clear.setOnClickListener(this);
     cameraView.setOnClickListener(this);
+    initRadio();
   }
 
-  void initUndoRedoEnable(){
+  private void initRadio() {
+    radioGroup = (RadioGroup) findViewById(R.id.radioRroup);
+    radioGroup.setOnCheckedChangeListener(new RadioListener());
+  }
+
+
+  private class RadioListener implements RadioGroup.OnCheckedChangeListener {
+    @Override
+    public void onCheckedChanged(RadioGroup group, int id) {
+      if (id == R.id.drawBack) {
+        drawView.drawBack();
+        drawRectView.setDraw(false);
+        drawView.setVisibility(View.VISIBLE);
+      } else if (id == R.id.drawFore) {
+        drawView.drawFore();
+        drawView.setVisibility(View.VISIBLE);
+      } else if (id == R.id.drawRectBtn) {
+        clearEverything();
+        drawView.setVisibility(View.GONE);
+        drawRectView.setDraw(true);
+        drawRectView.setOnFinishListener(new DrawRectView.OnFinishListener() {
+          @Override
+          public void onFinish(Rect rect) {
+          }
+        });
+      }
+    }
+  }
+
+  void initUndoRedoEnable() {
     drawView.history.setCallBack(new History.CallBack() {
       @Override
       public void onHistoryChanged() {
         setUndoRedoEnable();
-        if(curFragment!=DRAW_FRAGMENT){
+        if (curFragment != DRAW_FRAGMENT) {
           showDrawFragment();
         }
       }
     });
   }
 
-  void setUndoRedoEnable(){
+  void setUndoRedoEnable() {
     redoView.setEnabled(drawView.history.canRedo());
     undoView.setEnabled(drawView.history.canUndo());
   }
@@ -146,6 +177,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     setSizeByResourceSize();
     setViewSize(originView);
     setViewSize(drawView);
+    setViewSize(drawRectView);
   }
 
   private void setSizeByResourceSize() {
@@ -188,7 +220,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
           }
         }
         ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.addBitmapToMemoryCache("origin", bitmap);
+        imageLoader.addOrReplaceToMemoryCache("origin", bitmap);
         originImg = bitmap;
         serverId = -1;
         originView.setImageBitmap(bitmap);
@@ -198,8 +230,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         Logger.d("origin w=%d h=%d", originImg.getWidth(), originImg.getHeight());
         drawView.setOriginBitmap(originImg, originView);
         Logger.d("drawview w=%d h=%d", drawView.getWidth(), drawView.getHeight());
-        if(App.debug){
-          goResult();
+        if (App.debug) {
+          //goResult();
         }
       }
     }, 500);
@@ -239,17 +271,13 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       drawView.redo();
     } else if (id == R.id.camera) {
       takePhoto();
-    }else if(id==R.id.material){
+    } else if (id == R.id.material) {
       goMaterial();
-    }else if(id==R.id.drawFore){
-      drawView.drawFore();
-    }else if(id==R.id.drawBack){
-      drawView.drawBack();
     }
   }
 
   private void goMaterial() {
-    Intent intent=new Intent(this, MaterialActivity.class);
+    Intent intent = new Intent(this, MaterialActivity.class);
     startActivityForResult(intent, MATERIAL_RESULT);
   }
 
@@ -272,6 +300,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public void clearEverything() {
     drawView.clear();
     originView.setImageBitmap(originImg);
+    drawRectView.clear();
     showDrawFragment();
   }
 
@@ -303,7 +332,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         try {
           //uploadToAV(baseUrl, originPath, handPath);
           String jsonRes = UploadImage.upload(baseUrl, serverId, Web.STATUS_CONTINUE,
-              originPath, handPath,false);
+              originPath, handPath, drawRectView.getRect(),false);
           getJsonData(jsonRes);
           res = true;
         } catch (Exception e) {
@@ -320,21 +349,21 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         }
         String foreUrl = json.getString(Web.FORE);
         String backUrl = json.getString(Web.BACK);
-        String resultUrl=json.getString(Web.RESULT);
-        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl,0);
-        backBitmap = Web.getBitmapFromUrlByStream1(backUrl,0);
-        resultBitmap=Web.getBitmapFromUrlByStream1(resultUrl,0);
+        String resultUrl = json.getString(Web.RESULT);
+        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl, 0);
+        backBitmap = Web.getBitmapFromUrlByStream1(backUrl, 0);
+        resultBitmap = Web.getBitmapFromUrlByStream1(resultUrl, 0);
       }
 
       @Override
       protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         if (res) {
-          Logger.d("lzw","get json ok then show recogFragment");
+          Logger.d("lzw", "get json ok then show recogFragment");
           showRecogFragment(foreBitmap, backBitmap);
           replaceBitmap();
         } else {
-          Utils.toast(DrawActivity.this,R.string.server_error);
+          Utils.toast(DrawActivity.this, R.string.server_error);
           recogNo();
         }
       }
@@ -381,18 +410,19 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   public void recogOk() {
-    new AsyncTask<Void,Void,Void>(){
+    new AsyncTask<Void, Void, Void>() {
       boolean res;
       String jsonRes;
+
       @Override
       protected Void doInBackground(Void... params) {
         try {
           jsonRes = UploadImage.upload(baseUrl, serverId, Web.STATUS_OK,
-              null, null,true);
-          res=true;
+              null, null, null,true);
+          res = true;
         } catch (Exception e) {
           e.printStackTrace();
-          res=false;
+          res = false;
         }
         return null;
       }
@@ -400,12 +430,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       @Override
       protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(res){
+        if (res) {
           Intent intent = new Intent(DrawActivity.this, ResultActivity.class);
-          intent.putExtra(RESULT_JSON,jsonRes);
+          intent.putExtra(RESULT_JSON, jsonRes);
           startActivity(intent);
-        }else {
-          Utils.toast(getApplicationContext(),R.string.server_error);
+        } else {
+          Utils.toast(getApplicationContext(), R.string.server_error);
         }
       }
     }.execute();
@@ -430,10 +460,11 @@ public class DrawActivity extends Activity implements View.OnClickListener {
           setImageByUri(uri, 0);
           break;
         case MATERIAL_RESULT:
-          uri=data.getData();
-          setImageByUri(uri,0);
+          uri = data.getData();
+          setImageByUri(uri, 0);
       }
     }
   }
+
 
 }

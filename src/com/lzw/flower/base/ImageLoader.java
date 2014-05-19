@@ -38,6 +38,11 @@ public class ImageLoader {
       mMemoryCache.put(key, bitmap);
     }
   }
+
+  public void addOrReplaceToMemoryCache
+      (String key,Bitmap bitmap){
+    mMemoryCache.put(key, bitmap);
+  }
   
   public Bitmap getBitmapFromMemoryCache(String key){
     Bitmap bm=null;

@@ -1,7 +1,9 @@
 package com.lzw.flower.web;
 
+import android.graphics.Rect;
 import com.lzw.flower.result.Image;
 import com.lzw.flower.utils.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -62,7 +64,7 @@ public class UploadImage {
     try {
       URL url = new URL(actionUrl);
       conn = (HttpURLConnection) url.openConnection();
-      conn.setConnectTimeout(120000);
+      conn.setConnectTimeout(15000);
       conn.setDoInput(true);        // 允许输入
       conn.setDoOutput(true);        // 允许输出
       conn.setUseCaches(false);    // 不使用Cache
@@ -119,13 +121,22 @@ public class UploadImage {
 
 
   public static String upload(String actionUrl, int id, String status,String originPath,
-                            String handPath,boolean isResultOk) throws Exception {
+                            String handPath,Rect rect,boolean isResultOk) throws Exception {
     Set<Map.Entry<Object, Object>> params = new HashSet<Map.Entry<Object, Object>>();
     JSONObject obj=new JSONObject();
     obj.accumulate(Web.ID,id);
     obj.accumulate(Web.STATUS,status);
+    if(rect!=null){
+      JSONArray arr=new JSONArray();
+      arr.put(rect.left);
+      arr.put(rect.top);
+      arr.put(rect.right);
+      arr.put(rect.bottom);
+      obj.accumulate(Web.RECT,arr);
+    }
     Map<String, String> map = new HashMap<String, String>();
     String jsonStr = obj.toString();
+    Logger.d(jsonStr+" send json");
     map.put(Web.TEXT, jsonStr);
     for (Map.Entry entry : map.entrySet()) {
       params.add(entry);

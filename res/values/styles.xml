@@ -17,4 +17,12 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+
+    <style name="SwitchRedText" parent="@android:style/TextAppearance.Holo.Small">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="SwitchBlueText" parent="@android:style/TextAppearance.Holo.Small">
+        <item name="android:textColor">@color/blue</item>
+    </style>
 </resources>

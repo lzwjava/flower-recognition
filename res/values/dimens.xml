@@ -2,7 +2,7 @@
 <resources>
     <dimen name="pic">200dp</dimen>
     <dimen name="leftMenu">100dp</dimen>
-    <dimen name="right">150dp</dimen>
+    <dimen name="right">130dp</dimen>
     <dimen name="undoRedo">50dp</dimen>
     <dimen name="ensure">100dp</dimen>
     <dimen name="leftBottom">100dp</dimen>
@@ -17,4 +17,5 @@
     <dimen name="showViewLayoutPadding">10dp</dimen>
     <dimen name="listPadding">10dp</dimen>
     <dimen name="wiki">30dp</dimen>
+    <dimen name="radioText">12sp</dimen>
 </resources>
