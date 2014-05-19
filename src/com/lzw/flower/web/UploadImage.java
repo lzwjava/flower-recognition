@@ -130,8 +130,8 @@ public class UploadImage {
       JSONArray arr=new JSONArray();
       arr.put(rect.left);
       arr.put(rect.top);
-      arr.put(rect.right);
-      arr.put(rect.bottom);
+      arr.put(rect.width());
+      arr.put(rect.height());
       obj.accumulate(Web.RECT,arr);
     }
     Map<String, String> map = new HashMap<String, String>();

@@ -18,6 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.lzw.flower.R;
 import com.lzw.flower.base.App;
 import com.lzw.flower.base.ImageLoader;
@@ -43,8 +46,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int WAIT_FRAGMENT = 3;
   public static final int MATERIAL_RESULT = 4;
   public static final String RESULT_JSON = "resultJson";
-  String ip = "172.19.32.115";
-  final String baseUrl = "http://" + ip + ":8080/file";
+  String baseUrl;
 
   ImageView originView;
   DrawView drawView;
@@ -94,6 +96,24 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       //goResult();
     }
     initUndoRedoEnable();
+    setIp();
+  }
+
+  private void setIp() {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          AVQuery q=new AVQuery("Constant");
+          AVObject obj = q.get(App.IP_ID);
+          String ip = obj.getString("ip");
+          baseUrl= "http://" + ip + ":8080/file";
+          Logger.d(baseUrl+" baseUrl");
+        } catch (AVException e) {
+          e.printStackTrace();
+        }
+      }
+    }).start();
   }
 
   private void goResult() {
@@ -331,6 +351,9 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       protected Void doInBackground(Void... params) {
         try {
           //uploadToAV(baseUrl, originPath, handPath);
+          if(baseUrl==null){
+            throw new Exception("baseUrl is null");
+          }
           String jsonRes = UploadImage.upload(baseUrl, serverId, Web.STATUS_CONTINUE,
               originPath, handPath, drawRectView.getRect(),false);
           getJsonData(jsonRes);

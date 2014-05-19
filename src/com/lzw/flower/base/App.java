@@ -14,6 +14,7 @@ public class App extends Application {
 
   public static int drawWidth=800;
   public static int drawHeight=600;
+  public static String IP_ID="537a64b0e4b01dde2abf2a07";
 
   @Override
   public void onCreate() {
