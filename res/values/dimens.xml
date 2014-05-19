@@ -8,4 +8,5 @@
     <dimen name="leftBottom">100dp</dimen>
     <dimen name="draw_width">400dp</dimen>
     <dimen name="draw_height">300dp</dimen>
+    <dimen name="listViewHeight">200dp</dimen>
 </resources>

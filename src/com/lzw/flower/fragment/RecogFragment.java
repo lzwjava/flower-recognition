@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import com.lzw.flower.base.App;
 import com.lzw.flower.R;
 
 /**
@@ -44,7 +45,9 @@ public class RecogFragment extends Fragment {
     if(bitmap!=null){
       imgView.setImageBitmap(bitmap);
     }else{
-      throw new NullPointerException("bitmap is null");
+      if(App.debug==false){
+        throw new NullPointerException("bitmap is null");
+      }
     }
   }
 

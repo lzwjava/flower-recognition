@@ -16,11 +16,13 @@
     <orderEntry type="jdk" jdkName="Android 4.4.2 Google APIs x86" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="android-async-http-1.4.4-fix" level="project" />
-    <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="library" name="fastjson" level="project" />
     <orderEntry type="module" module-name="supertooltips_library" />
     <orderEntry type="module" module-name="listview_library" />
     <orderEntry type="library" name="httpmime-4.1.3" level="project" />
+    <orderEntry type="library" name="avoscloud-v2.5.4.1" level="project" />
+    <orderEntry type="module" module-name="HListViewlibrary" />
+    <orderEntry type="library" name="android-support-v419" level="project" />
   </component>
 </module>
 
