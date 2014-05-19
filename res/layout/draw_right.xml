@@ -28,7 +28,8 @@
             android:id="@+id/drawOk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/ok"

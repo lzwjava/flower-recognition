@@ -2,11 +2,11 @@ package com.lzw.flower;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import com.lzw.flower.Utils.PathUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,6 +17,14 @@ import java.util.List;
  * Created by lzw on 14-4-30.
  */
 public class Web {
+  public static final String TEXT = "text";
+  public static final String ORIGIN = "origin";
+  public static final String HAND = "hand";
+  public static final String BACK = "back";
+  public static String ID="id";
+  public static String STATUS="status";
+  public static String FORE="fore";
+
   public static List<Data> getDatas() {
     List<Data> datas = new ArrayList<Data>();
     try {
@@ -53,6 +61,59 @@ public class Web {
     conn = (HttpURLConnection) url.openConnection();
     BufferedInputStream bif = Web.getBufferedInput(conn);
     return BitmapFactory.decodeStream(bif);
+  }
+
+  public static Bitmap getBitmapFromUrlByStream1(String urlStr) throws IOException {
+    String tmpPath= PathUtils.getBitmapPath();
+    downloadUrlToPath(urlStr,tmpPath);
+    Logger.d("download succeed");
+    return BitmapFactory.decodeFile(tmpPath);
+  }
+
+  public static void downloadUrlToPath(String url2, String path) {
+    // TODO Auto-generated method stub
+    BufferedInputStream bInput = null;
+    BufferedOutputStream bOutput = null;
+    try {
+      HttpURLConnection conn = null;
+      URL url = new URL(url2);
+      conn = (HttpURLConnection) url.openConnection();
+      bInput = getBufferedInput(conn);
+      bOutput = getBufferedOutput(path);
+      byte[] buffer = new byte[1024];
+      int cnt;
+      while ((cnt = bInput.read(buffer)) != -1) {
+        bOutput.write(buffer, 0, cnt);
+      }
+      bOutput.flush();
+      if(conn!=null){
+        conn.disconnect();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (bInput != null)
+          bInput.close();
+        if (bOutput != null)
+          bOutput.close();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public static BufferedOutputStream getBufferedOutput(String path)
+      throws IOException, FileNotFoundException {
+    BufferedOutputStream bOutput;
+    File file = new File(path);
+    if (file.getParentFile().exists() == false) {
+      file.getParentFile().mkdirs();
+    }
+    file.createNewFile();
+    bOutput = new BufferedOutputStream(new FileOutputStream(file));
+    return bOutput;
   }
 
   public static BufferedInputStream getBufferedInput(HttpURLConnection conn)

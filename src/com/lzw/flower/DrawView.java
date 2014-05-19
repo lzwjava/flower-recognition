@@ -19,8 +19,6 @@ public class DrawView extends View {
   public static final int BACKGROUND = 1;
   public static final int BACKGROUND_COLOR = Color.BLUE;
   public static final int FOREGROUND_COLOR = Color.RED;
-  public static final int WIDTH = App.drawWidth;
-  public static final int HEIGHT = App.drawHeight;
   Canvas cacheCanvas;
   Bitmap cacheBm;
   Paint paint;
@@ -40,7 +38,7 @@ public class DrawView extends View {
   }
 
   public void clear(ImageView img) {
-    cacheBm=getEmptyBitmap(getContext(), WIDTH, HEIGHT);
+    cacheBm=getEmptyBitmap(getContext(), App.drawWidth, App.drawHeight);
     cacheCanvas.setBitmap(cacheBm);
     history=new History();
     history.saveToStack(cacheBm);

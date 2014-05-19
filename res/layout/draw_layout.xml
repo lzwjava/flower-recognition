@@ -18,7 +18,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:onClick="camera"
                 android:src="@drawable/camera"
                 android:background="@null" />
 
@@ -53,7 +52,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:onClick="settings"
                 android:src="@drawable/settings"
                 android:background="@null" />
 
@@ -98,7 +96,6 @@
                     android:layout_weight="1"
                     android:src="@drawable/undo"
                     android:scaleType="center"
-                    android:onClick="undo"
                     android:background="@null" />
 
                 <ImageButton
@@ -107,7 +104,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:src="@drawable/redo"
-                    android:onClick="redo"
                     android:background="@null" />
             </LinearLayout>
 

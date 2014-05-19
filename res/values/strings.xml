@@ -15,4 +15,5 @@
     <string name="recogTips">分离得可以的话请点确定来找类似的花卉们</string>
     <string name="recog_flower">推荐花卉</string>
     <string name="is_loading">加载中...</string>
+    <string name="helpTip">有疑问随时点我:)</string>
 </resources>

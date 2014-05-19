@@ -12,21 +12,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import com.avos.avoscloud.AVFile;
 import com.lzw.flower.Utils.PathUtils;
 import com.lzw.flower.Utils.Utils;
 import com.lzw.flower.fragment.DrawFragment;
 import com.lzw.flower.fragment.RecogFragment;
 import com.lzw.flower.fragment.WaitFragment;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +44,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   String imgPath = "/mnt/sdcard/titan.jpg";
   public static DrawActivity instance;
   ListView flowerList;
-  View dir, clear;
+  View dir, clear, undoView, redoView, cameraView;
   public static final int IMAGE_RESULT = 0;
   String cropPath;
   Tooltip toolTip;
@@ -62,10 +59,16 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     setContentView(R.layout.draw_layout);
     imgView = (ImageView) findViewById(R.id.img);
     drawView = (DrawView) findViewById(R.id.drawView);
+    undoView = findViewById(R.id.undo);
+    redoView = findViewById(R.id.redo);
     clear = findViewById(R.id.clear);
     dir = findViewById(R.id.dir);
+    cameraView = findViewById(R.id.camera);
     dir.setOnClickListener(this);
+    undoView.setOnClickListener(this);
+    redoView.setOnClickListener(this);
     clear.setOnClickListener(this);
+    cameraView.setOnClickListener(this);
     setSize();
     if (App.debug == false) {
       originImg = BitmapFactory.decodeFile(imgPath);
@@ -97,12 +100,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   private void setSize() {
-    setWholeSize();
+    setSizeByResourceSize();
     setViewSize(imgView);
     setViewSize(drawView);
   }
 
-  private void setWholeSize() {
+  private void setSizeByResourceSize() {
     int width = getResources().getDimensionPixelSize(R.dimen.draw_width);
     int height = getResources().getDimensionPixelSize(R.dimen.draw_height);
     App.drawWidth = width;
@@ -180,18 +183,33 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       Utils.getGalleryPhoto(this, IMAGE_RESULT);
     } else if (id == R.id.clear) {
       clearEverything();
-    } else if (id == R.id.resultNo) {
-      showRecogFragment();
     } else if (id == R.id.help) {
       if (curFragment == DRAW_FRAGMENT) {
-        toolTip.start();
+        toolTip.startWhenDraw();
       }
+    } else if (id == R.id.undo) {
+      drawView.undo();
+    } else if (id == R.id.redo) {
+      drawView.redo();
+    } else if (id == R.id.camera) {
+      takePhoto();
     }
   }
 
-  private void showRecogFragment() {
+  private void takePhoto() {
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    Uri uri;
+    uri = getCameraUri();
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+    startActivityForResult(intent, CAMERA_RESULT);
+  }
+
+  private void showRecogFragment(Bitmap foreBitmap, Bitmap backBitmap) {
     curFragment = RECOG_FRAGMENT;
-    showFragment(new RecogFragment());
+    RecogFragment recogFragment = new RecogFragment();
+    recogFragment.setForeBitmap(foreBitmap);
+    recogFragment.setBackBitmap(backBitmap);
+    showFragment(recogFragment);
   }
 
   public void clearEverything() {
@@ -211,9 +229,11 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     BitmapUtils.saveBitmapToPath(originBitmap, originPath);
     final String handPath = PathUtils.getHandPath();
     BitmapUtils.saveBitmapToPath(handBitmap, handPath);
-    final String baseUrl = "http://127.0.0.1:8083";
+    final String baseUrl = "http://172.19.32.112:8080/file";
     new AsyncTask<Void, Void, Void>() {
       boolean res;
+      Bitmap foreBitmap;
+      Bitmap backBitmap;
 
       @Override
       protected void onPreExecute() {
@@ -224,16 +244,9 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       @Override
       protected Void doInBackground(Void... params) {
         try {
-          AVFile origin = AVFile.withAbsoluteLocalPath("origin.png", originPath);
-          origin.save();
-          //Thread.sleep(1000);
-          AVFile hand = AVFile.withAbsoluteLocalPath("hand.png", handPath);
-          hand.save();
-          String originUrl = origin.getUrl();
-          String handUrl = hand.getUrl();
-          HttpClient client = new DefaultHttpClient();
-          String content = Server.doPost(client, baseUrl, "origin", originUrl, "hand", handUrl, "id", serverId + "");
-          Logger.d(content+"");
+          //uploadToAV(baseUrl, originPath, handPath);
+          String jsonRes = UploadImage.upload(baseUrl, serverId, originPath, handPath);
+          getJsonData(jsonRes);
           res = true;
         } catch (Exception e) {
           res = false;
@@ -242,13 +255,23 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         return null;
       }
 
+      private void getJsonData(String jsonRes) throws Exception {
+        JSONObject json = new JSONObject(jsonRes);
+        if (serverId == -1) {
+          serverId = json.getInt(Web.ID);
+        }
+        String foreUrl = json.getString(Web.FORE);
+        String backUrl = json.getString(Web.BACK);
+        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl);
+        backBitmap = Web.getBitmapFromUrlByStream1(backUrl);
+      }
+
       @Override
       protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         if (res) {
-          showRecogFragment();
+          showRecogFragment(foreBitmap, backBitmap);
         } else {
-
         }
       }
     }.execute();
@@ -278,23 +301,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     showFragment(new DrawFragment());
   }
 
-  public void undo(View v) {
-    drawView.undo();
-  }
-
-  public void redo(View v) {
-    drawView.redo();
-  }
-
-  public void settings(View v) {
-  }
-
   public void camera(View v) {
-    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    Uri uri;
-    uri = getCameraUri();
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-    startActivityForResult(intent, CAMERA_RESULT);
+
   }
 
   public Uri getCameraUri() {

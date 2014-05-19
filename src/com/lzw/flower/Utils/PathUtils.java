@@ -27,6 +27,10 @@ public class PathUtils {
     return getAppDir() + "tmp";
   }
 
+  public static String getBitmapPath() {
+    return getAppDir() + "tmp.png";
+  }
+
   public static String getCropPath() {
     return getAppDir() + "crop";
   }
