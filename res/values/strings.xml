@@ -17,4 +17,5 @@
     <string name="is_loading">加载中...</string>
     <string name="helpTip">有疑问随时点我:)</string>
     <string name="pleaseChooseOneFlower">请选一张心仪的图片</string>
+    <string name="server_error">服务器错误</string>
 </resources>

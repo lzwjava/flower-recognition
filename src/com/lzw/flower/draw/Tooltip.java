@@ -81,7 +81,7 @@ public class Tooltip implements View.OnClickListener {
   }
 
   private void addOktip() {
-    okTooltip = getToolTipView(R.id.ok, R.layout.tooltip_ok, android.R.color.holo_green_light);
+    okTooltip = getToolTipView(R.id.drawOk, R.layout.tooltip_ok, android.R.color.holo_green_light);
   }
 
   void addHelptip(){

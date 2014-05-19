@@ -118,21 +118,26 @@ public class UploadImage {
   }
 
 
-  public static String upload(String actionUrl, int id, String originPath,
-                            String handPath) throws Exception {
+  public static String upload(String actionUrl, int id, String status,String originPath,
+                            String handPath,boolean isResultOk) throws Exception {
     Set<Map.Entry<Object, Object>> params = new HashSet<Map.Entry<Object, Object>>();
     JSONObject obj=new JSONObject();
     obj.accumulate(Web.ID,id);
-    obj.accumulate(Web.STATUS,"continue");
+    obj.accumulate(Web.STATUS,status);
     Map<String, String> map = new HashMap<String, String>();
     String jsonStr = obj.toString();
     map.put(Web.TEXT, jsonStr);
     for (Map.Entry entry : map.entrySet()) {
       params.add(entry);
     }
-    Image[] files = new Image[2];
-    files[0] = new Image(originPath, "origin.png", Web.ORIGIN);
-    files[1] = new Image(handPath, "hand.png", Web.HAND);
+    Image[] files;
+    if(isResultOk==false){
+      files = new Image[2];
+      files[0] = new Image(originPath, "origin.png", Web.ORIGIN);
+      files[1] = new Image(handPath, "hand.png", Web.HAND);
+    }else{
+      files=new Image[0];
+    }
     String jsonRes = new UploadImage().post(actionUrl, params, files);
     Logger.d("result =" + jsonRes);
     return jsonRes;

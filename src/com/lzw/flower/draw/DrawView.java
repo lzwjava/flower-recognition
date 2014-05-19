@@ -79,10 +79,8 @@ public class DrawView extends View {
       path.quadTo(preX,preY,x,y);
       setPrev(event);
     }else if(action==MotionEvent.ACTION_UP){
-      if(updatePaint()){
-        cacheCanvas.drawPath(path,paint);
-        history.saveToStack(cacheBm);
-      }
+      cacheCanvas.drawPath(path,paint);
+      history.saveToStack(cacheBm);
       path.reset();
     }
     invalidate();
@@ -101,11 +99,10 @@ public class DrawView extends View {
     if(cacheBm!=null){
       canvas.drawBitmap(cacheBm,0,0,p);
     }
-    if(updatePaint()){
-      canvas.drawPath(path,paint);
-    }
+    canvas.drawPath(path,paint);
   }
 
+  @Deprecated
   private boolean updatePaint() {
     int curPos=history.getCurPos();
     boolean coundPaint=false;

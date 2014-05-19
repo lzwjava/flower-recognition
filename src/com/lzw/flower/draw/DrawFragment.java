@@ -29,7 +29,7 @@ public class DrawFragment extends Fragment {
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    ok=getView().findViewById(R.id.ok);
+    ok=getView().findViewById(R.id.drawOk);
     ok.setOnClickListener((View.OnClickListener) getActivity());
     infoView= (TextView) getView().findViewById(R.id.infoView);
     Resources res=getResources();

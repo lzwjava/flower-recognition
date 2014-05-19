@@ -3,7 +3,7 @@ package com.lzw.flower.deprecated;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
 import com.lzw.flower.utils.Logger;
-import com.lzw.flower.web.Server;
+import com.lzw.flower.web.Web;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -22,7 +22,7 @@ public class Deprecated {
     String originUrl = origin.getUrl();
     String handUrl = hand.getUrl();
     HttpClient client = new DefaultHttpClient();
-    String content = Server.doPost(client, baseUrl, "origin", originUrl, "hand", handUrl, "id", serverId + "");
+    String content = Web.doPost(client, baseUrl, "origin", originUrl, "hand", handUrl, "id", serverId + "");
     Logger.d(content + "");
   }
 }

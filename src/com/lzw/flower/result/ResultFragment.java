@@ -1,6 +1,9 @@
 package com.lzw.flower.result;
 
-import android.app.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,9 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
-import com.lzw.flower.*;
-import com.lzw.flower.utils.Utils;
+import com.lzw.flower.R;
+import com.lzw.flower.base.App;
 import com.lzw.flower.base.ImageLoader;
+import com.lzw.flower.draw.DrawActivity;
+import com.lzw.flower.utils.Utils;
 import com.lzw.flower.web.Web;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
@@ -79,7 +84,8 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
     new Thread(new Runnable() {
       @Override
       public void run() {
-        List<FlowerData> datas = Web.getDatas();
+        String json=getJsonFromIntent();
+        List<FlowerData> datas = Web.getDatas(json);
         try {
           Web.downloadBitmaps(datas);
           Message msg = handler.obtainMessage();
@@ -89,6 +95,13 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
         } catch (IOException e) {
           e.printStackTrace();
         }
+      }
+
+      private String getJsonFromIntent() {
+        Intent intent=getActivity().getIntent();
+        String json = intent.getStringExtra(DrawActivity.RESULT_JSON);
+        assert json!=null;
+        return json;
       }
     }).start();
   }

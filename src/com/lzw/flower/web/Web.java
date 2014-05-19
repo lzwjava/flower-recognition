@@ -7,6 +7,14 @@ import com.lzw.flower.base.ImageLoader;
 import com.lzw.flower.utils.Logger;
 import com.lzw.flower.utils.PathUtils;
 import com.lzw.flower.base.App;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,14 +33,17 @@ public class Web {
   public static final String ORIGIN = "origin";
   public static final String HAND = "hand";
   public static final String BACK = "back";
+  public static final String STATUS_CONTINUE = "continue";
   public static String ID="id";
   public static String STATUS="status";
   public static String FORE="fore";
+  public static String STATUS_OK="ok";
+  public static String RESULT="result";
 
-  public static List<FlowerData> getDatas() {
+  public static List<FlowerData> getDatas(String jsonStr) {
     List<FlowerData> datas = new ArrayList<FlowerData>();
     try {
-      JSONObject json = new JSONObject(App.json);
+      JSONObject json = new JSONObject(jsonStr);
       boolean valid = json.getBoolean("valid");
       if (valid) {
         JSONArray arr = json.getJSONArray("images");
@@ -141,5 +152,26 @@ public class Web {
       }
     }
     return bitmap;
+  }
+
+  public static String doPost(HttpClient httpClient, String url, String... pairs) {
+    String entityContent = null;
+    try {
+      HttpPost post = new HttpPost(url);
+      List<NameValuePair> params = new ArrayList<NameValuePair>();
+      for (int i = 0; i < pairs.length / 2; i++) {
+        params.add(new BasicNameValuePair(pairs[2 * i], pairs[2 * i + 1]));
+      }
+      post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+      HttpResponse response = httpClient.execute(post);
+      int code = response.getStatusLine().getStatusCode();
+      if (code == 200 || code == 206 || code==400) {
+        entityContent = EntityUtils.toString(response.getEntity());
+      }
+      Logger.d("%d code", response.getStatusLine().getStatusCode());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return entityContent;
   }
 }

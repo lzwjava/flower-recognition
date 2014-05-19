@@ -15,11 +15,20 @@ import java.util.Stack;
  */
 public class History {
   Stack<Bitmap> histroy;
+  CallBack callBack=new CallBack() {
+    @Override
+    public void onHistoryChanged() {
+    }
+  };
   int curPos;
 
   public History() {
     histroy = new Stack<Bitmap>();
     curPos = -1;
+  }
+
+  public void setCallBack(CallBack callBack) {
+    this.callBack = callBack;
   }
 
   public void saveToStack(Bitmap cacheBm) {
@@ -28,6 +37,7 @@ public class History {
 
     Bitmap bm =copy;
     curPos++;
+    callBack.onHistoryChanged();
     while (histroy.size() > curPos) {
       histroy.pop();
     }
@@ -62,6 +72,7 @@ public class History {
   public Bitmap undo() throws UnsupportedOperationException {
     if (canUndo()) {
       curPos--;
+      callBack.onHistoryChanged();
       Bitmap bitmap = histroy.get(curPos);
       return getCopyBitmap(bitmap);
     } else {
@@ -72,6 +83,7 @@ public class History {
   public Bitmap redo() throws UnsupportedOperationException {
     if (canRedo()) {
       curPos++;
+      callBack.onHistoryChanged();
       Bitmap bitmap = histroy.get(curPos);
       return getCopyBitmap(bitmap);
     } else {
@@ -94,5 +106,9 @@ public class History {
 
   public int getCurPos() {
     return curPos;
+  }
+
+  public interface CallBack{
+    void onHistoryChanged();
   }
 }
