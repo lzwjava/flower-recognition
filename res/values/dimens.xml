@@ -10,4 +10,11 @@
     <dimen name="draw_height">300dp</dimen>
     <dimen name="listViewHeight">200dp</dimen>
     <dimen name="penPadding">20dp</dimen>
+    <dimen name="flowerListWidth">120dp</dimen>
+    <dimen name="headerMargin">5dp</dimen>
+    <dimen name="flowerName">12sp</dimen>
+    <dimen name="showViewPadding">15dp</dimen>
+    <dimen name="showViewLayoutPadding">10dp</dimen>
+    <dimen name="listPadding">10dp</dimen>
+    <dimen name="wiki">30dp</dimen>
 </resources>

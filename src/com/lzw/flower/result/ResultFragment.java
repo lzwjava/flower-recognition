@@ -4,18 +4,19 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.*;
 import com.lzw.flower.R;
-import com.lzw.flower.base.App;
-import com.lzw.flower.base.ImageLoader;
 import com.lzw.flower.draw.DrawActivity;
+import com.lzw.flower.utils.Logger;
 import com.lzw.flower.utils.Utils;
 import com.lzw.flower.web.Web;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -37,6 +38,10 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
   AlertDialog dialog;
   FlowerAdapter adapter;
   Activity cxt;
+  ImageView showView;
+  TextView typeNameView,typeDescView;
+  ImageButton wikiView;
+  WikiListener wikiListener;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,20 +52,61 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     cxt=getActivity();
+    findView();
+    addHeader();
+    beginDownload();
+    initAnim();
+    perfromHeaderClick();
+  }
+
+  public void findView() {
     flowerListLayout=getView().findViewById(R.id.flowerListLayout);
     flowerList= (ListView) flowerListLayout.findViewById(R.id.flowerList);
     resultNo = getView().findViewById(R.id.resultNo);
+    typeNameView= (TextView) getView().findViewById(R.id.typeName);
+    typeDescView= (TextView) getView().findViewById(R.id.typeDesc);
+    wikiView.findViewById(R.id.wiki);
+    wikiListener=new WikiListener();
+    wikiView.setOnClickListener(wikiListener);
     resultNo.setOnClickListener(this);
-    addHeader();
-    setOriginView();
-    beginDownload();
-    initAnim();
+    showView= (ImageView) getView().findViewById(R.id.showView);
   }
 
   private void addHeader() {
     LayoutInflater inflater=LayoutInflater.from(getActivity());
     View header=inflater.inflate(R.layout.list_header,null,false);
     flowerList.addHeaderView(header);
+
+    originView= (ImageView) header.findViewById(R.id.originView);
+    Bitmap origin = getOriginBitmap();
+    originView.setImageBitmap(origin);
+    header.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        perfromHeaderClick();
+      }
+    });
+  }
+
+  public void perfromHeaderClick() {
+    typeNameView.setText(R.string.origin_flower);
+    typeDescView.setText(null);
+    new Handler().postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        setBitmapByKey("origin");
+      }
+    }, 500);
+    setWiki(false,null);
+  }
+
+  private void setWiki(boolean isShow,String key) {
+    if(isShow){
+      wikiView.setVisibility(View.VISIBLE);
+      wikiListener.setKey(key);
+    }else{
+      wikiView.setVisibility(View.INVISIBLE);
+    }
   }
 
   void initAnim(){
@@ -70,14 +116,45 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
     swingBottomInAnimationAdapter.setInitialDelayMillis(300);
     swingBottomInAnimationAdapter.setAbsListView(flowerList);
     flowerList.setAdapter(swingBottomInAnimationAdapter);
+    flowerList.setOnItemClickListener(new flowerClickListener());
   }
 
-  public void setOriginView() {
-    originView= (ImageView) getView().findViewById(R.id.originImgView);
-    ImageLoader imageLoader=ImageLoader.getInstance();
-    originView.setImageBitmap(imageLoader.getBitmapFromMemoryCache("origin"));
+  class flowerClickListener implements android.widget.AdapterView.OnItemClickListener {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+      FlowerAdapter.Holder holder= (FlowerAdapter.Holder) view.getTag();
+      FlowerData data = holder.data;
+      String url =data.imageUrl;
+      typeNameView.setText(data.typeName);
+      typeDescView.setText(data.typeDesc);
+      setBitmapByKey(url);
+      setWiki(true,data.typeName);
+    }
   }
 
+  private void setBitmapByKey(String key) {
+    int h1= getLeftPicHeight();
+    Bitmap bm = Web.getBitmapCacheNetByHeight(key, h1);
+    showView.setImageBitmap(bm);
+  }
+
+  private int getLeftWidth() {
+    View view=getView().findViewById(R.id.recogOkLayout);
+    return view.getWidth();
+  }
+
+  private int getLeftPicHeight() {
+    View view=getView().findViewById(R.id.showViewLayout);
+    int h = view.getHeight();
+    Resources res = getResources();
+    int paddingH=res.getDimensionPixelSize(R.dimen.showViewLayoutPadding)*2;
+    int padH=res.getDimensionPixelSize(R.dimen.showViewPadding)*2;
+    return h-paddingH-padH;
+  }
+
+  public Bitmap getOriginBitmap() {
+    return Web.getBitmapCacheNet("origin",getThumbWidth());
+  }
 
   public void beginDownload() {
     dialog=Utils.showSpinnerAlert(getActivity());
@@ -87,7 +164,9 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
         String json=getJsonFromIntent();
         List<FlowerData> datas = Web.getDatas(json);
         try {
-          Web.downloadBitmaps(datas);
+          int reqWidth;
+          reqWidth= getThumbWidth();
+          Web.downloadBitmaps(datas, reqWidth);
           Message msg = handler.obtainMessage();
           msg.what = GOT_DATA;
           msg.obj = datas;
@@ -104,6 +183,13 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
         return json;
       }
     }).start();
+  }
+
+  public int getThumbWidth() {
+    Resources res = getResources();
+    int listWidth = res.getDimensionPixelSize(R.dimen.flowerListWidth);
+    int pad=res.getDimensionPixelSize(R.dimen.listPadding);
+    return listWidth-pad*2;
   }
 
 
@@ -131,6 +217,24 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
     int id=v.getId();
     if(id==R.id.resultNo){
       getActivity().finish();
+    }
+  }
+
+  class WikiListener implements View.OnClickListener {
+    String key;
+
+    public void setKey(String key) {
+      this.key = key;
+    }
+
+    @Override
+    public void onClick(View v) {
+      Intent intent=new Intent();
+      intent.setAction(Intent.ACTION_VIEW);
+      String url1="http://zh.wikipedia.org/wiki/";
+      Uri uri=Uri.parse(url1+key);
+      intent.setData(uri);
+      startActivity(intent);
     }
   }
 }

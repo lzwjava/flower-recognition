@@ -119,7 +119,7 @@ public class DrawView extends View {
 
   public boolean isDrawFinish(){
     int curPos = history.getCurPos();
-    return curPos==2;
+    return curPos>=2;
   }
 
   public Bitmap getCacheBm() {

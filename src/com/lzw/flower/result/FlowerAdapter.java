@@ -31,7 +31,7 @@ public class FlowerAdapter extends BaseAdapter {
   class Holder{
     ImageView flowerView;
     TextView typeNameView;
-    TextView typeDescView;
+    FlowerData data;
   }
 
   @Override
@@ -56,15 +56,14 @@ public class FlowerAdapter extends BaseAdapter {
       conView=inflater.inflate(R.layout.flower_item,null);
       Holder holder=new Holder();
       holder.flowerView= (ImageView) conView.findViewById(R.id.image);
-      holder.typeDescView= (TextView) conView.findViewById(R.id.typeDesc);
       holder.typeNameView= (TextView) conView.findViewById(R.id.typeName);
       conView.setTag(holder);
     }
     Holder holder= (Holder) conView.getTag();
     FlowerData data=datas.get(position);
+    holder.data=data;
     holder.flowerView.setImageBitmap(data.flower);
     holder.typeNameView.setText(data.typeName);
-    holder.typeDescView.setText(data.typeDesc);
     return conView;
   }
 }

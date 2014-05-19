@@ -2,11 +2,10 @@ package com.lzw.flower.web;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import com.lzw.flower.result.FlowerData;
 import com.lzw.flower.base.ImageLoader;
+import com.lzw.flower.result.FlowerData;
 import com.lzw.flower.utils.Logger;
 import com.lzw.flower.utils.PathUtils;
-import com.lzw.flower.base.App;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -34,11 +33,11 @@ public class Web {
   public static final String HAND = "hand";
   public static final String BACK = "back";
   public static final String STATUS_CONTINUE = "continue";
-  public static String ID="id";
-  public static String STATUS="status";
-  public static String FORE="fore";
-  public static String STATUS_OK="ok";
-  public static String RESULT="result";
+  public static String ID = "id";
+  public static String STATUS = "status";
+  public static String FORE = "fore";
+  public static String STATUS_OK = "ok";
+  public static String RESULT = "result";
 
   public static List<FlowerData> getDatas(String jsonStr) {
     List<FlowerData> datas = new ArrayList<FlowerData>();
@@ -53,7 +52,7 @@ public class Web {
           data.typeName = image.getString("typeName");
           data.typeDesc = image.getString("typeDesc");
           data.imageUrl = image.getString("ImageUrl");
-          data.infoUrl = image.getString("InfoUrl");
+          //data.infoUrl = image.getString("InfoUrl");
           datas.add(data);
         }
       }
@@ -63,10 +62,10 @@ public class Web {
     return datas;
   }
 
-  public static void downloadBitmaps(List<FlowerData> datas) throws IOException {
+  public static void downloadBitmaps(List<FlowerData> datas, int reqWidth) throws IOException {
     for (FlowerData data : datas) {
       String imageUrl = data.imageUrl;
-      data.flower=getBitmapCacheNet(imageUrl,0);
+      data.flower = getBitmapCacheNet(imageUrl, reqWidth);
     }
   }
 
@@ -78,11 +77,31 @@ public class Web {
     return BitmapFactory.decodeStream(bif);
   }
 
-  public static Bitmap getBitmapFromUrlByStream1(String urlStr) throws IOException {
-    String tmpPath= PathUtils.getBitmapPath();
-    downloadUrlToPath(urlStr,tmpPath);
-    Logger.d("download succeed");
+  public static Bitmap getBitmapFromUrlByStream1(String urlStr, int reqWidth) throws IOException {
+    String tmpPath = PathUtils.getBitmapPath();
+    downloadUrlToPath(urlStr, tmpPath);
     return BitmapFactory.decodeFile(tmpPath);
+  }
+
+  public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth) {
+    BitmapFactory.Options options = new BitmapFactory.Options();
+    options.inJustDecodeBounds = true;
+    BitmapFactory.decodeFile(path, options);
+    int inSampleSize = calInSampleSize(options, reqWidth);
+    options.inJustDecodeBounds = false;
+    options.inSampleSize = inSampleSize;
+    return BitmapFactory.decodeFile(path, options);
+  }
+
+  private static int calInSampleSize(BitmapFactory.Options options, int reqWidth) {
+    // TODO Auto-generated method stub
+    int w = options.outWidth;
+    int h = options.outHeight;
+    int inSampleSize = 1;
+    if (w > reqWidth) {
+      inSampleSize = Math.round(w / reqWidth);
+    }
+    return inSampleSize;
   }
 
   public static void downloadUrlToPath(String url2, String path) {
@@ -101,7 +120,7 @@ public class Web {
         bOutput.write(buffer, 0, cnt);
       }
       bOutput.flush();
-      if(conn!=null){
+      if (conn != null) {
         conn.disconnect();
       }
     } catch (Exception e) {
@@ -142,16 +161,52 @@ public class Web {
     return bInput;
   }
 
-  public static Bitmap getBitmapCacheNet(String imgUrl, int width) throws IOException {
+  public static Bitmap getBitmapCacheNet(String imgUrl, int width,int height) {
     Bitmap bitmap = null;
-    ImageLoader imageLoader=ImageLoader.getInstance();
-    if (imgUrl != null) {
-      bitmap = imageLoader.getBitmapFromMemoryCache(imgUrl);
-      if (bitmap == null) {
-        bitmap = getBitmapFromUrlByStream(imgUrl);
+    ImageLoader imageLoader = ImageLoader.getInstance();
+    try {
+      if (imgUrl != null) {
+        bitmap = imageLoader.getBitmapFromMemoryCache(imgUrl);
+        if (bitmap == null && imgUrl.startsWith("http")) {
+          bitmap = getBitmapFromUrlByStream1(imgUrl, width);
+          imageLoader.addBitmapToMemoryCache(imgUrl,bitmap);
+        }
       }
+      if (bitmap != null) {
+        if(width!=0){
+          bitmap = scaleBitmapByWidth(bitmap, width);
+        }else if(height!=0){
+          bitmap=scaleBitmapByHeight(bitmap,height);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     return bitmap;
+  }
+
+  public static Bitmap getBitmapCacheNet(String imgUrl, int width) {
+    return getBitmapCacheNet(imgUrl,width,0);
+  }
+
+  public static Bitmap getBitmapCacheNetByHeight(String imgUrl, int height) {
+    return getBitmapCacheNet(imgUrl,0,height);
+  }
+
+  public static Bitmap scaleBitmapByWidth(Bitmap bitmap, int width) {
+    int h = bitmap.getHeight();
+    int w = bitmap.getWidth();
+    int dw = width;
+    int dh = Math.round(dw * h*1.0f / w);
+    return Bitmap.createScaledBitmap(bitmap, dw, dh, false);
+  }
+
+  public static Bitmap scaleBitmapByHeight(Bitmap bitmap, int height) {
+    int h = bitmap.getHeight();
+    int w = bitmap.getWidth();
+    int dh = height;
+    int dw = Math.round(dh * w *1.0f/ h);
+    return Bitmap.createScaledBitmap(bitmap, dw, dh, false);
   }
 
   public static String doPost(HttpClient httpClient, String url, String... pairs) {
@@ -165,7 +220,7 @@ public class Web {
       post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
       HttpResponse response = httpClient.execute(post);
       int code = response.getStatusLine().getStatusCode();
-      if (code == 200 || code == 206 || code==400) {
+      if (code == 200 || code == 206 || code == 400) {
         entityContent = EntityUtils.toString(response.getEntity());
       }
       Logger.d("%d code", response.getStatusLine().getStatusCode());

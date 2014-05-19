@@ -88,8 +88,15 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       //recogOk();
       //materialView.performClick();
       //showRecogFragment(null,null);
+      //goResult();
     }
     initUndoRedoEnable();
+  }
+
+  private void goResult() {
+    Intent intent = new Intent(DrawActivity.this, ResultActivity.class);
+    intent.putExtra(RESULT_JSON,App.json);
+    startActivity(intent);
   }
 
   private void findView() {
@@ -118,6 +125,9 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       @Override
       public void onHistoryChanged() {
         setUndoRedoEnable();
+        if(curFragment!=DRAW_FRAGMENT){
+          showDrawFragment();
+        }
       }
     });
   }
@@ -188,6 +198,9 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         Logger.d("origin w=%d h=%d", originImg.getWidth(), originImg.getHeight());
         drawView.setOriginBitmap(originImg, originView);
         Logger.d("drawview w=%d h=%d", drawView.getWidth(), drawView.getHeight());
+        if(App.debug){
+          goResult();
+        }
       }
     }, 500);
   }
@@ -258,6 +271,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
 
   public void clearEverything() {
     drawView.clear();
+    originView.setImageBitmap(originImg);
     showDrawFragment();
   }
 
@@ -307,9 +321,9 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         String foreUrl = json.getString(Web.FORE);
         String backUrl = json.getString(Web.BACK);
         String resultUrl=json.getString(Web.RESULT);
-        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl);
-        backBitmap = Web.getBitmapFromUrlByStream1(backUrl);
-        resultBitmap=Web.getBitmapFromUrlByStream1(resultUrl);
+        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl,0);
+        backBitmap = Web.getBitmapFromUrlByStream1(backUrl,0);
+        resultBitmap=Web.getBitmapFromUrlByStream1(resultUrl,0);
       }
 
       @Override
