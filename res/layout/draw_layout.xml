@@ -55,7 +55,7 @@
                 android:src="@drawable/material"
                 android:background="@null" />
 
-            <View
+            <!--<View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/light_green" />
@@ -66,7 +66,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:src="@drawable/settings"
-                android:background="@null" />
+                android:background="@null" />-->
 
             <View
                 android:layout_width="match_parent"
@@ -133,23 +133,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/radioText"
-                        android:text="@string/drawRect" />
-
+                        android:drawableLeft="@drawable/rect"/>
 
                     <RadioButton
                         android:id="@+id/drawBack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/radioText"
-                        android:checked="true"
-                        android:text="@string/draw_backgroud" />
+                        android:drawableLeft="@drawable/blue" />
 
                     <RadioButton
                         android:id="@+id/drawFore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/radioText"
-                        android:text="@string/draw_foreground" />
+                        android:drawableLeft="@drawable/red" />
 
                 </RadioGroup>
 
@@ -159,10 +157,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginTop="0dp"
                 android:background="@drawable/card_background_white"
                 android:padding="10dp"
-                android:layout_margin="3dp">
+                android:layout_margin="10dp">
 
                 <ImageView
                     android:id="@+id/img"

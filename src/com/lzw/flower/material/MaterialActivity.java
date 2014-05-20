@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,11 +12,13 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import com.lzw.flower.utils.BitmapUtils;
-import com.lzw.flower.utils.Logger;
 import com.lzw.flower.R;
+import com.lzw.flower.utils.BitmapUtils;
+import com.lzw.flower.utils.PathUtils;
 import it.sephiroth.android.library.widget.AdapterView;
 import it.sephiroth.android.library.widget.HListView;
+
+import java.io.File;
 
 /**
  * Created by lzw on 14-5-19.
@@ -27,17 +30,46 @@ public class MaterialActivity extends Activity {
       R.drawable.flower_normal};
   private Context cxt;
   ImageAdapter imageAdapter;
+  Bitmap[] imgs=new Bitmap[0];
+  File dir;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     cxt = this;
-    getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN ,
-        WindowManager.LayoutParams. FLAG_FULLSCREEN);
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.material_layout);
     findView();
     initActionBar();
     initListView();
+    checkAndCopyToImageDir();
+  }
+
+  private void checkAndCopyToImageDir() {
+    String dirStr = PathUtils.getImageDir();
+    dir = new File(dirStr);
+    SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
+    boolean isFirst = pref.getBoolean("isFirst", true);
+    int len;
+    if (isFirst) {
+      len = flowerIds.length;
+      for (int i = 0; i < len; i++) {
+        Bitmap bm = BitmapFactory.decodeResource(getResources(),flowerIds[i]);
+        File f = new File(dir, i + "");
+        BitmapUtils.saveBitmapToPath(bm, f.getPath());
+      }
+      pref.edit().putBoolean("isFirst", false).commit();
+      checkAndCopyToImageDir();
+    } else {
+      File[] fs = dir.listFiles();
+      len=fs.length;
+      imgs=new Bitmap[len];
+      for(int i=0;i<len;i++){
+        imgs[i]=decodeImageFile(fs[i]);
+      }
+      imageAdapter.notifyDataSetChanged();
+    }
   }
 
   private void initActionBar() {
@@ -59,11 +91,11 @@ public class MaterialActivity extends Activity {
       it.sephiroth.android.library.widget.AdapterView.OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-      Intent intent=new Intent();
-      int resId=flowerIds[position];
+      Intent intent = new Intent();
+      int resId = flowerIds[position];
       Uri uri = BitmapUtils.getResourceUri(resId);
       intent.setData(uri);
-      setResult(RESULT_OK,intent);
+      setResult(RESULT_OK, intent);
       finish();
     }
   }
@@ -75,12 +107,12 @@ public class MaterialActivity extends Activity {
 
     @Override
     public int getCount() {
-      return flowerIds.length;
+      return imgs.length;
     }
 
     @Override
     public Object getItem(int position) {
-      return null;
+      return imgs[position];
     }
 
     @Override
@@ -95,34 +127,9 @@ public class MaterialActivity extends Activity {
         conView = inflater.inflate(R.layout.material_item, null, false);
       }
       ImageView imageView = (ImageView) conView.findViewById(R.id.imageView);
-      Bitmap bm = getScaledBitmap(position);
       //Bitmap bm = BitmapFactory.decodeResource(getResources(),flowerIds[position]);
-      imageView.setImageBitmap(bm);
+      imageView.setImageBitmap(imgs[position]);
       return conView;
-    }
-
-    private Bitmap getScaledBitmap(int position) {
-      int resId = flowerIds[position];
-      BitmapFactory.Options opt = new BitmapFactory.Options();
-      opt.inJustDecodeBounds = true;
-      BitmapFactory.decodeResource(getResources(), resId, opt);
-      int toH = getResources().getDimensionPixelSize(R.dimen.listViewHeight);
-      int scale = calInSampleSize(opt, toH);
-      opt.inSampleSize = scale;
-      opt.inJustDecodeBounds = false;
-      Bitmap bm = BitmapFactory.decodeResource(getResources(), resId, opt);
-      Logger.d("width=" + bm.getWidth());
-      return bm;
-    }
-
-    private int calInSampleSize(BitmapFactory.Options options, int reqHeight) {
-      // TODO Auto-generated method stub
-      int h = options.outHeight;
-      int inSampleSize = 1;
-      if (h > reqHeight) {
-        inSampleSize = Math.round(h * 1.0f / reqHeight);
-      }
-      return inSampleSize;
     }
   }
 
@@ -136,4 +143,8 @@ public class MaterialActivity extends Activity {
     return super.onOptionsItemSelected(item);
   }
 
+  Bitmap decodeImageFile(File file) {
+    int toH = getResources().getDimensionPixelSize(R.dimen.listViewHeight);
+    return BitmapUtils.decodeFileByHeight(file.getPath(), toH);
+  }
 }

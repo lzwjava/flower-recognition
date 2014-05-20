@@ -1,8 +1,11 @@
 package com.lzw.flower.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -96,5 +99,51 @@ public class BitmapUtils {
   public static Uri getResourceUri(int resId) {
     return Uri.parse("android.resource://com.lzw.flower/"
         + resId);
+  }
+
+  public static Bitmap getBitmapByUri(Context cxt,Uri uri) throws IOException {
+    return MediaStore.Images.Media.getBitmap(cxt.getContentResolver(), uri);
+  }
+
+  public static int calInSampleSize(BitmapFactory.Options options, int reqWidth) {
+    // TODO Auto-generated method stub
+    int w = options.outWidth;
+    int h = options.outHeight;
+    int inSampleSize = 1;
+    if (w > reqWidth &&reqWidth>0) {
+      inSampleSize = Math.round(w / reqWidth);
+    }
+    return inSampleSize;
+  }
+
+  public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth) {
+    BitmapFactory.Options options = new BitmapFactory.Options();
+    options.inJustDecodeBounds = true;
+    BitmapFactory.decodeFile(path, options);
+    int inSampleSize = calInSampleSize(options, reqWidth);
+    options.inJustDecodeBounds = false;
+    options.inSampleSize = inSampleSize;
+    return BitmapFactory.decodeFile(path, options);
+  }
+
+  public static Bitmap decodeFileByHeight(String path, int reqH) {
+    BitmapFactory.Options opt = new BitmapFactory.Options();
+    opt.inJustDecodeBounds = true;
+    BitmapFactory.decodeFile(path, opt);
+    int scale = calInSampleSizeByHeight(opt, reqH);
+    opt.inSampleSize = scale;
+    opt.inJustDecodeBounds = false;
+    Bitmap bm = BitmapFactory.decodeFile(path, opt);
+    return bm;
+  }
+
+  public static int calInSampleSizeByHeight(BitmapFactory.Options options, int reqHeight) {
+    // TODO Auto-generated method stub
+    int h = options.outHeight;
+    int inSampleSize = 1;
+    if (h > reqHeight) {
+      inSampleSize = Math.round(h * 1.0f / reqHeight);
+    }
+    return inSampleSize;
   }
 }

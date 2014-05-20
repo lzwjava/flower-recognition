@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.lzw.flower.base.ImageLoader;
 import com.lzw.flower.result.FlowerData;
+import com.lzw.flower.utils.BitmapUtils;
 import com.lzw.flower.utils.Logger;
 import com.lzw.flower.utils.PathUtils;
 import org.apache.http.HttpResponse;
@@ -78,31 +79,10 @@ public class Web {
     return BitmapFactory.decodeStream(bif);
   }
 
-  public static Bitmap getBitmapFromUrlByStream1(String urlStr) throws Exception {
+  public static Bitmap getBitmapFromUrlByStream1(String urlStr, int width) throws Exception {
     String tmpPath = PathUtils.getBitmapPath();
     downloadUrlToPath(urlStr, tmpPath);
-    return BitmapFactory.decodeFile(tmpPath);
-  }
-
-  public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth) {
-    BitmapFactory.Options options = new BitmapFactory.Options();
-    options.inJustDecodeBounds = true;
-    BitmapFactory.decodeFile(path, options);
-    int inSampleSize = calInSampleSize(options, reqWidth);
-    options.inJustDecodeBounds = false;
-    options.inSampleSize = inSampleSize;
-    return BitmapFactory.decodeFile(path, options);
-  }
-
-  private static int calInSampleSize(BitmapFactory.Options options, int reqWidth) {
-    // TODO Auto-generated method stub
-    int w = options.outWidth;
-    int h = options.outHeight;
-    int inSampleSize = 1;
-    if (w > reqWidth) {
-      inSampleSize = Math.round(w / reqWidth);
-    }
-    return inSampleSize;
+    return BitmapUtils.decodeSampledBitmapFromPath(tmpPath, width);
   }
 
   public static void downloadUrlToPath(String url2, String path) throws Exception {
@@ -177,7 +157,7 @@ public class Web {
       }
       bitmap = imageLoader.getBitmapFromMemoryCache(scaleUrl);
       if (bitmap == null && imgUrl.startsWith("http")) {
-        bitmap = getBitmapFromUrlByStream1(scaleUrl);
+        bitmap = getBitmapFromUrlByStream1(scaleUrl, width);
         Logger.d("return bitmap width " + bitmap.getWidth());
         Logger.d("require width=" + width);
         imageLoader.addBitmapToMemoryCache(scaleUrl, bitmap);

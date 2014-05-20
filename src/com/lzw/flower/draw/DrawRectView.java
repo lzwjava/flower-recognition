@@ -83,7 +83,7 @@ public class DrawRectView extends View {
 
   public void clear() {
     rect=null;
-    invalidate();
+    requestLayout();
   }
 
   public Rect getRect() {

@@ -6,8 +6,8 @@
     <dimen name="undoRedo">50dp</dimen>
     <dimen name="ensure">100dp</dimen>
     <dimen name="leftBottom">100dp</dimen>
-    <dimen name="draw_width">400dp</dimen>
-    <dimen name="draw_height">300dp</dimen>
+    <dimen name="draw_width">380dp</dimen>
+    <dimen name="draw_height">280dp</dimen>
     <dimen name="listViewHeight">200dp</dimen>
     <dimen name="penPadding">20dp</dimen>
     <dimen name="flowerListWidth">120dp</dimen>

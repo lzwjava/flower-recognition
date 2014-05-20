@@ -5,8 +5,8 @@
     <string name="draw_foreground">画花朵</string>
     <string name="draw_backgroud">画背景</string>
     <string name="info">选好花的照片，用两种颜色的笔以表示前景背景，点确定便可识别花朵</string>
-    <string name="please_use">请先用</string>
-    <string name="draw_back">画背景，再用</string>
+    <string name="please_use">请用</string>
+    <string name="draw_back">画背景</string>
     <string name="draw_flower">画花朵</string>
     <string name="dirTip">从手机相册中打开一张花的图片</string>
     <string name="drawTip">在这里涂鸦，以表示背景和花朵</string>
@@ -21,4 +21,7 @@
     <string name="origin_flower">原花</string>
     <string name="drawRect">画矩形</string>
     <string name="no_network">未联网</string>
+    <string name="comma">，</string>
+    <string name="drawRectTips">可画矩形圈住花朵以便更精确地分离识别</string>
+    <string name="draw_rect">圈住花以便更精确地分离识别花卉</string>
 </resources>

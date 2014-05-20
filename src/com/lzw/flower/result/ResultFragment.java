@@ -14,10 +14,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.lzw.flower.R;
 import com.lzw.flower.draw.DrawActivity;
 import com.lzw.flower.utils.Utils;
@@ -236,6 +233,14 @@ public class ResultFragment extends Fragment implements View.OnClickListener {
         ResultFragment.this.datas = datas;
         adapter.setDatas(datas);
         adapter.notifyDataSetChanged();
+        if (datas.size() > 0) {
+          ListAdapter adapter = flowerList.getAdapter();
+          int pos = 1;
+          flowerList.performItemClick(adapter
+              .getView(pos, null, null),
+              pos,
+              adapter.getItemId(pos));
+        }
         res = true;
       }
       return res;

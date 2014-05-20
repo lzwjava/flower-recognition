@@ -19,8 +19,9 @@ public class Crop {
     intent.setDataAndType(uri, "image/*");
     int w= App.drawWidth;
     int h=App.drawHeight;
-    int w1=w/100;
-    int h1=h/100;
+    int factor=gcd(w,h);
+    int w1=w/factor;
+    int h1=h/factor;
     intent.putExtra("crop", "true").putExtra("aspectX", w1).
         putExtra("aspectY", h1).putExtra("scale", true)
         .putExtra("outputX",w).putExtra("outputY",h).
@@ -30,5 +31,14 @@ public class Crop {
     Uri uri1 = Uri.fromFile(new File(outputPath));
     intent.putExtra(MediaStore.EXTRA_OUTPUT, uri1);
     cxt.startActivityForResult(intent, resultCode);
+
+  }
+
+  static int gcd(int a,int b){
+    if(b==0){
+      return a;
+    }else{
+      return gcd(b,a%b);
+    }
   }
 }

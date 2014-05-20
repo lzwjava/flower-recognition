@@ -23,6 +23,12 @@ public class PathUtils {
     }
   }
 
+  public static String getImageDir(){
+    String dir=getAppDir()+"image/";
+    checkDir(dir);
+    return dir;
+  }
+
   public static String getCameraPath() {
     return getAppDir() + "tmp";
   }

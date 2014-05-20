@@ -1,6 +1,5 @@
 package com.lzw.flower.draw;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.lzw.flower.R;
+import com.lzw.flower.base.App;
 
 /**
  * Created by lzw on 14-4-30.
@@ -19,6 +19,10 @@ import com.lzw.flower.R;
 public class DrawFragment extends Fragment {
   View ok;
   TextView infoView;
+  int infoId;
+  public DrawFragment(int infoId) {
+    this.infoId=infoId;
+  }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,13 +36,38 @@ public class DrawFragment extends Fragment {
     ok=getView().findViewById(R.id.drawOk);
     ok.setOnClickListener((View.OnClickListener) getActivity());
     infoView= (TextView) getView().findViewById(R.id.infoView);
-    Resources res=getResources();
-    infoView.append(res.getString(R.string.please_use));
-    infoView.append(getSpannedImage(R.drawable.blue));
-    infoView.append(res.getString(R.string.draw_back));
-    infoView.append(getSpannedImage(R.drawable.red));
-    infoView.append(res.getString
-        (R.string.draw_flower));
+    if(infoId== App.DRAW_BACK){
+      appendBlue();
+    }else if(infoId== App.DRAW_FORE){
+      appendRed();
+    }else if(infoId== App.DRAW_RECT){
+      appendRect();
+    }
+  }
+
+  private void appendRed() {
+    appendAll(R.drawable.red,R.string.draw_flower);
+  }
+
+  private void appendRect(){
+    appendAll(R.drawable.rect,R.string.draw_rect);
+  }
+
+  private void appendBlue() {
+    int imgId = R.drawable.blue;
+    int txtId = R.string.draw_back;
+    appendAll(imgId, txtId);
+  }
+
+  public void appendAll(int imgId, int txtId) {
+    Resources res=getActivity().getResources();
+    infoView.setText(res.getString(R.string.please_use));
+    appendImageAndText(res, imgId, txtId);
+  }
+
+  public void appendImageAndText(Resources res, int imgId, int txtId) {
+    infoView.append(getSpannedImage(imgId));
+    infoView.append(res.getString(txtId));
   }
 
   public Spanned getSpannedImage(int id) {
