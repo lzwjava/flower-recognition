@@ -38,7 +38,7 @@ public class Web {
   public static String FORE = "fore";
   public static String STATUS_OK = "ok";
   public static String RESULT = "result";
-  public static String RECT="rect";
+  public static String RECT = "rect";
 
   public static List<FlowerData> getDatas(String jsonStr) {
     List<FlowerData> datas = new ArrayList<FlowerData>();
@@ -63,7 +63,7 @@ public class Web {
     return datas;
   }
 
-  public static void downloadBitmaps(List<FlowerData> datas, int reqWidth) throws IOException {
+  public static void downloadBitmaps(List<FlowerData> datas, int reqWidth) throws Exception {
     for (FlowerData data : datas) {
       String imageUrl = data.imageUrl;
       data.flower = getBitmapCacheNet(imageUrl, reqWidth);
@@ -78,7 +78,7 @@ public class Web {
     return BitmapFactory.decodeStream(bif);
   }
 
-  public static Bitmap getBitmapFromUrlByStream1(String urlStr, int reqWidth) throws IOException {
+  public static Bitmap getBitmapFromUrlByStream1(String urlStr) throws Exception {
     String tmpPath = PathUtils.getBitmapPath();
     downloadUrlToPath(urlStr, tmpPath);
     return BitmapFactory.decodeFile(tmpPath);
@@ -105,7 +105,7 @@ public class Web {
     return inSampleSize;
   }
 
-  public static void downloadUrlToPath(String url2, String path) {
+  public static void downloadUrlToPath(String url2, String path) throws Exception {
     // TODO Auto-generated method stub
     BufferedInputStream bInput = null;
     BufferedOutputStream bOutput = null;
@@ -126,6 +126,7 @@ public class Web {
       }
     } catch (Exception e) {
       e.printStackTrace();
+      throw e;
     } finally {
       try {
         if (bInput != null)
@@ -162,43 +163,45 @@ public class Web {
     return bInput;
   }
 
-  public static Bitmap getBitmapCacheNet(String imgUrl, int width,int height) {
+  public static Bitmap getBitmapCacheNet(String imgUrl, int width, int height) throws Exception {
     Bitmap bitmap = null;
     ImageLoader imageLoader = ImageLoader.getInstance();
-    try {
-      if (imgUrl != null) {
-        bitmap = imageLoader.getBitmapFromMemoryCache(imgUrl);
-        if (bitmap == null && imgUrl.startsWith("http")) {
-          bitmap = getBitmapFromUrlByStream1(imgUrl, width);
-          imageLoader.addBitmapToMemoryCache(imgUrl,bitmap);
+    if (imgUrl != null) {
+      String scaleUrl = imgUrl;
+      if (width > 0) {
+        if (imgUrl.contains("filename")) {
+          scaleUrl = imgUrl + "&maxWidth=" + width;
+        } else if (imgUrl.contains("qiniu")) {
+          scaleUrl = imgUrl + "?imageView2/2/w/" + width;
         }
       }
-      if (bitmap != null) {
-        if(width!=0){
-          bitmap = scaleBitmapByWidth(bitmap, width);
-        }else if(height!=0){
-          bitmap=scaleBitmapByHeight(bitmap,height);
-        }
+      bitmap = imageLoader.getBitmapFromMemoryCache(scaleUrl);
+      if (bitmap == null && imgUrl.startsWith("http")) {
+        bitmap = getBitmapFromUrlByStream1(scaleUrl);
+        Logger.d("return bitmap width " + bitmap.getWidth());
+        Logger.d("require width=" + width);
+        imageLoader.addBitmapToMemoryCache(scaleUrl, bitmap);
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    }
+    if (bitmap != null) {
+      if (width != 0) {
+        bitmap = scaleBitmapByWidth(bitmap, width);
+      } else if (height != 0) {
+        bitmap = scaleBitmapByHeight(bitmap, height);
+      }
     }
     return bitmap;
   }
 
-  public static Bitmap getBitmapCacheNet(String imgUrl, int width) {
-    return getBitmapCacheNet(imgUrl,width,0);
-  }
-
-  public static Bitmap getBitmapCacheNetByHeight(String imgUrl, int height) {
-    return getBitmapCacheNet(imgUrl,0,height);
+  public static Bitmap getBitmapCacheNet(String imgUrl, int width) throws Exception {
+    return getBitmapCacheNet(imgUrl, width, 0);
   }
 
   public static Bitmap scaleBitmapByWidth(Bitmap bitmap, int width) {
     int h = bitmap.getHeight();
     int w = bitmap.getWidth();
     int dw = width;
-    int dh = Math.round(dw * h*1.0f / w);
+    int dh = Math.round(dw * h * 1.0f / w);
     return Bitmap.createScaledBitmap(bitmap, dw, dh, false);
   }
 
@@ -206,7 +209,7 @@ public class Web {
     int h = bitmap.getHeight();
     int w = bitmap.getWidth();
     int dh = height;
-    int dw = Math.round(dh * w *1.0f/ h);
+    int dw = Math.round(dh * w * 1.0f / h);
     return Bitmap.createScaledBitmap(bitmap, dw, dh, false);
   }
 

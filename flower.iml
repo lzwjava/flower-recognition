@@ -23,6 +23,7 @@
     <orderEntry type="library" name="avoscloud-v2.5.4.1" level="project" />
     <orderEntry type="module" module-name="HListViewlibrary" />
     <orderEntry type="library" name="android-support-v419" level="project" />
+    <orderEntry type="module" module-name="volley" />
   </component>
 </module>
 

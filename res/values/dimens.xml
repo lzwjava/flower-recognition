@@ -18,4 +18,5 @@
     <dimen name="listPadding">10dp</dimen>
     <dimen name="wiki">30dp</dimen>
     <dimen name="radioText">12sp</dimen>
+    <dimen name="showViewWidth">400dp</dimen>
 </resources>

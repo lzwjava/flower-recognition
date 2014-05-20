@@ -51,9 +51,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   ImageView originView;
   DrawView drawView;
   Bitmap originImg;
-  String imgPath = "/mnt/sdcard/titan.jpg";
   public static DrawActivity instance;
-  View dir, clear, cameraView, materialView, drawRectBtn;
+  View dir, clear, cameraView, materialView;
   ImageView undoView, redoView;
   public static final int IMAGE_RESULT = 0;
   String cropPath;
@@ -72,21 +71,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     setContentView(R.layout.draw_layout);
     findView();
     setSize();
-    if (App.debug == false) {
-      originImg = BitmapFactory.decodeFile(imgPath);
-    } else {
-      Intent intent = getIntent();
-      Uri uri = intent.getData();
-      if (uri != null) {
-        setImageByUri(uri, 0);
-      } else {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.flower_water);
-        String imgPath = PathUtils.getCameraPath();
-        BitmapUtils.saveBitmapToPath(bitmap, imgPath);
-        Uri uri1 = Uri.fromFile(new File(imgPath));
-        setImageByUri(uri1, 0);
-      }
-    }
+    initOriginImage();
     showDrawFragment();
     toolTip = new Tooltip(this);
     if (App.debug) {
@@ -97,6 +82,14 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     }
     initUndoRedoEnable();
     setIp();
+  }
+
+  private void initOriginImage() {
+    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.flower_water);
+    String imgPath = PathUtils.getCameraPath();
+    BitmapUtils.saveBitmapToPath(bitmap, imgPath);
+    Uri uri1 = Uri.fromFile(new File(imgPath));
+    setImageByUri(uri1, 0);
   }
 
   private void setIp() {
@@ -251,7 +244,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         drawView.setOriginBitmap(originImg, originView);
         Logger.d("drawview w=%d h=%d", drawView.getWidth(), drawView.getHeight());
         if (App.debug) {
-          //goResult();
+          goResult();
         }
       }
     }, 500);
@@ -373,9 +366,9 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         String foreUrl = json.getString(Web.FORE);
         String backUrl = json.getString(Web.BACK);
         String resultUrl = json.getString(Web.RESULT);
-        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl, 0);
-        backBitmap = Web.getBitmapFromUrlByStream1(backUrl, 0);
-        resultBitmap = Web.getBitmapFromUrlByStream1(resultUrl, 0);
+        foreBitmap = Web.getBitmapFromUrlByStream1(foreUrl);
+        backBitmap = Web.getBitmapFromUrlByStream1(backUrl);
+        resultBitmap = Web.getBitmapFromUrlByStream1(resultUrl);
       }
 
       @Override

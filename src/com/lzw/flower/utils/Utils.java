@@ -82,4 +82,8 @@ public class Utils {
     return Math.round
         (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics()));
   }
+
+  public static void toastNoNetwork(Context context) {
+    toast(context,R.string.no_network);
+  }
 }
