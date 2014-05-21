@@ -53,7 +53,7 @@ public class Utils {
   }
 
 
-  public static ProgressDialog showSpinnerDialog(Activity activity) {
+  public static ProgressDialog showMySpinnerDialog(Activity activity) {
     ProgressDialog dialog = new ProgressDialog(activity);
     dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
@@ -66,6 +66,14 @@ public class Utils {
     dialog.setCancelable(true);
     dialog.show();
     dialog.setContentView(R.layout.spinner_dialog);
+    return dialog;
+  }
+
+  public static ProgressDialog showSpinnerDialog(Activity activity) {
+    ProgressDialog dialog = new ProgressDialog(activity);
+    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+    dialog.setCancelable(true);
+    dialog.show();
     return dialog;
   }
 

@@ -105,10 +105,11 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         originW = bitmap.getWidth();
         originH = bitmap.getHeight();
         if (originW != App.drawWidth || originH != App.drawHeight) {
-          int originRadio = (int) (originW * 1.0f / originH);
-          int radio = (int) (App.drawWidth * 1.0f / App.drawHeight);
-          if (originRadio == radio) {
+          float originRadio = originW * 1.0f / originH;
+          float radio = App.drawWidth * 1.0f / App.drawHeight;
+          if (Math.abs(originRadio-radio)<0.01) {
             Bitmap originBm=bitmap;
+            Logger.d("create bitmap");
             bitmap = Bitmap.createScaledBitmap(originBm, App.drawWidth, App.drawHeight, false);
             originBm.recycle();
           } else {
