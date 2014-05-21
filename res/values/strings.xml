@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">flower</string>
+    <string name="app_name">识花</string>
     <string name="no_more">没有更多了</string>
     <string name="draw_foreground">画花朵</string>
     <string name="draw_backgroud">画背景</string>
@@ -11,7 +11,7 @@
     <string name="dirTip">从手机相册中打开一张花的图片</string>
     <string name="drawTip">在这里涂鸦，以表示背景和花朵</string>
     <string name="okTip">画好了，点这里提取花卉</string>
-    <string name="please_draw_finish">亲，没画完哦</string>
+    <string name="please_draw_finish">没画完哦，得用蓝线画出背景、用红线画在花上、用矩形圈出花朵</string>
     <string name="recogTips">分离得可以的话请点确定来找类似的花卉们</string>
     <string name="recog_flower">类似花卉</string>
     <string name="is_loading">加载中...</string>
@@ -22,6 +22,8 @@
     <string name="drawRect">画矩形</string>
     <string name="no_network">未联网</string>
     <string name="comma">，</string>
-    <string name="drawRectTips">可画矩形圈住花朵以便更精确地分离识别</string>
-    <string name="draw_rect">圈住花以便更精确地分离识别花卉</string>
+    <string name="drawRectTips">圈出花朵大致区域</string>
+    <string name="splashText">花卉识别，从心开始</string>
+    <string name="draw_flower_tips">画在花朵上</string>
+    <string name="draw_back_tips">表示花朵周围的背景</string>
 </resources>

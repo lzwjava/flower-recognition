@@ -64,6 +64,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   private RadioGroup radioGroup;
   Fragment curFragment;
   int curDrawMode;
+  RadioButton drawBackBtn;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,6 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     setIp();
     initDrawmode();
   }
-
 
   private void setImageByUri(final Uri uri, final float angle) {
     new Handler().postDelayed(new Runnable() {
@@ -128,7 +128,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         drawView.setOriginBitmap(originImg, originView);
         Logger.d("drawview w=%d h=%d", drawView.getWidth(), drawView.getHeight());
         curDrawMode = App.DRAW_RECT;
-        showDrawFragment(curDrawMode);
+        showDrawFragment(App.ALL_INFO);
         if (App.debug) {
           //goResult();
         }
@@ -179,6 +179,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     undoView = (ImageView) findViewById(R.id.undo);
     redoView = (ImageView) findViewById(R.id.redo);
     drawRectView = (DrawRectView) findViewById(R.id.drawRectView);
+    drawBackBtn= (RadioButton) findViewById(R.id.drawBack);
     clear = findViewById(R.id.clear);
     dir = findViewById(R.id.dir);
     materialView = findViewById(R.id.material);
@@ -219,6 +220,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         drawRectView.setOnFinishListener(new DrawRectView.OnFinishListener() {
           @Override
           public void onFinish(Rect rect) {
+            drawBackBtn.setChecked(true);
           }
         });
       }

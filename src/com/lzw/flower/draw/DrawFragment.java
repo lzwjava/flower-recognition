@@ -42,26 +42,37 @@ public class DrawFragment extends Fragment {
       appendRed();
     }else if(infoId== App.DRAW_RECT){
       appendRect();
+    }else if(infoId==App.ALL_INFO){
+      appendAll();
     }
   }
 
   private void appendRed() {
-    appendAll(R.drawable.red,R.string.draw_flower);
+    appendAllText(R.drawable.red, R.string.draw_flower_tips);
   }
 
   private void appendRect(){
-    appendAll(R.drawable.rect,R.string.draw_rect);
+    appendAllText(R.drawable.rect, R.string.drawRectTips);
   }
 
   private void appendBlue() {
     int imgId = R.drawable.blue;
-    int txtId = R.string.draw_back;
-    appendAll(imgId, txtId);
+    int txtId = R.string.draw_back_tips;
+    appendAllText(imgId, txtId);
   }
 
-  public void appendAll(int imgId, int txtId) {
+  public void appendAll(){
+    appendRect();
+    infoView.append("\n");
+    appendBlue();
+    infoView.append("\n");
+    appendRed();
+    infoView.append("\n");
+  }
+
+  public void appendAllText(int imgId, int txtId) {
     Resources res=getActivity().getResources();
-    infoView.setText(res.getString(R.string.please_use));
+    infoView.append(res.getString(R.string.please_use));
     appendImageAndText(res, imgId, txtId);
   }
 
