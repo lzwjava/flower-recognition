@@ -46,6 +46,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int WAIT_FRAGMENT = 3;
   public static final int MATERIAL_RESULT = 4;
   public static final String RESULT_JSON = "resultJson";
+  public static final int INIT_FLOWER_ID = R.drawable.flower_b;
   String baseUrl;
 
   ImageView originView;
@@ -144,7 +145,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   private void initOriginImage() {
-    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.flower_water);
+    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), INIT_FLOWER_ID);
     String imgPath = PathUtils.getCameraPath();
     BitmapUtils.saveBitmapToPath(bitmap, imgPath);
     Uri uri1 = Uri.fromFile(new File(imgPath));

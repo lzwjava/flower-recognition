@@ -165,7 +165,7 @@
                     android:id="@+id/img"
                     android:layout_width="@dimen/draw_width"
                     android:layout_height="@dimen/draw_height"
-                    android:src="@drawable/flower_water"
+                    android:src="@drawable/flower_b"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter" />
 

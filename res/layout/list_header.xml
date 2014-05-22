@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            android:src="@drawable/flower" />
+            android:src="@drawable/flower_a" />
 
         <LinearLayout
             android:layout_width="match_parent"

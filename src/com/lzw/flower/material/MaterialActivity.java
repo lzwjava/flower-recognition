@@ -28,9 +28,8 @@ import java.io.File;
  */
 public class MaterialActivity extends Activity {
   HListView listView;
-  int[] flowerIds = new int[]{R.drawable.flower_1, R.drawable.flower_bufferfly,
-      R.drawable.flower_month, R.drawable.flower_mudan, R.drawable.flower_2,
-      R.drawable.flower_normal};
+  int[] flowerIds = new int[]{R.drawable.flower_a, R.drawable.flower_b,
+      R.drawable.flower_c, R.drawable.flower_d, R.drawable.flower_e};
   private Context cxt;
   ImageAdapter imageAdapter;
   Bitmap[] imgs=new Bitmap[0];
