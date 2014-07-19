@@ -25,4 +25,10 @@
     <style name="SwitchBlueText" parent="@android:style/TextAppearance.Holo.Small">
         <item name="android:textColor">@color/blue</item>
     </style>
+
+    <style name="btn_blue">
+        <item name="android:background">@drawable/circle_light_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_margin">3dp</item>
+    </style>
 </resources>

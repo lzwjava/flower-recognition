@@ -55,18 +55,18 @@
                 android:src="@drawable/material"
                 android:background="@null" />
 
-            <!--<View
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/light_green" />
 
             <ImageButton
-                android:id="@+id/settings"
+                android:id="@+id/upload"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:src="@drawable/settings"
-                android:background="@null" />-->
+                android:src="@drawable/upload"
+                android:background="@null" />
 
             <View
                 android:layout_width="match_parent"

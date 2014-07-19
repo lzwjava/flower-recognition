@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import com.lzw.flower.R;
+import com.lzw.flower.activity.LoginActivity;
 import com.lzw.flower.draw.DrawActivity;
 
 /**
@@ -22,7 +23,7 @@ public class SplashActivity extends Activity {
     new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        Intent intent=new Intent(SplashActivity.this, DrawActivity.class);
+        Intent intent=new Intent(SplashActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
       }

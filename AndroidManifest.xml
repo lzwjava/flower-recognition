@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lzw.flower"
-    android:versionCode="5"
-    android:versionName="1.4">
+    android:versionCode="6"
+    android:versionName="1.5">
 
     <uses-sdk android:minSdkVersion="14" />
 
@@ -29,7 +29,8 @@
 
         </activity>
 
-        <activity android:name=".base.SplashActivity"
+        <activity
+            android:name=".base.SplashActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,6 +54,17 @@
             android:theme="@android:style/Theme.Holo.Light">
 
         </activity>
+
+        <activity
+            android:name=".activity.PhotoActivity"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:screenOrientation="landscape"
+            android:label="@string/uploadPhotos"></activity>
+
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait">
+         </activity>
     </application>
 
 </manifest>

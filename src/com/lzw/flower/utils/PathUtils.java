@@ -23,8 +23,8 @@ public class PathUtils {
     }
   }
 
-  public static String getImageDir(){
-    String dir=getAppDir()+"image/";
+  public static String getImageDir() {
+    String dir = getAppDir() + "image/";
     checkDir(dir);
     return dir;
   }
@@ -47,5 +47,9 @@ public class PathUtils {
 
   public static String getHandPath() {
     return getAppDir() + "hand.png";
+  }
+
+  public static String getTmpPath() {
+    return getBitmapPath();
   }
 }

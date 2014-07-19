@@ -12,17 +12,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
 import com.lzw.flower.R;
+import com.lzw.flower.activity.PhotoActivity;
 import com.lzw.flower.base.App;
 import com.lzw.flower.base.ImageLoader;
 import com.lzw.flower.fragment.RecogFragment;
@@ -30,6 +29,10 @@ import com.lzw.flower.fragment.WaitFragment;
 import com.lzw.flower.material.MaterialActivity;
 import com.lzw.flower.result.ResultActivity;
 import com.lzw.flower.utils.*;
+import com.lzw.flower.utils.BitmapUtils;
+import com.lzw.flower.utils.Logger;
+import com.lzw.flower.utils.PathUtils;
+import com.lzw.flower.utils.Utils;
 import com.lzw.flower.web.UploadImage;
 import com.lzw.flower.web.Web;
 import org.json.JSONObject;
@@ -47,6 +50,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int MATERIAL_RESULT = 4;
   public static final String RESULT_JSON = "resultJson";
   public static final int INIT_FLOWER_ID = R.drawable.flower_b;
+  public static final int LOGOUT = 0;
   String baseUrl;
 
   ImageView originView;
@@ -55,6 +59,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static DrawActivity instance;
   View dir, clear, cameraView, materialView;
   ImageView undoView, redoView;
+  View upload;
+
   public static final int IMAGE_RESULT = 0;
   String cropPath;
   Tooltip toolTip;
@@ -66,11 +72,13 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   Fragment curFragment;
   int curDrawMode;
   RadioButton drawBackBtn;
+  private Activity cxt;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     instance = this;
+    cxt=this;
     cropPath = PathUtils.getCropPath();
     setContentView(R.layout.draw_layout);
     findView();
@@ -138,6 +146,22 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     }, 500);
   }
 
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    menu.add(0, LOGOUT,0,R.string.logOut);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    int id=item.getItemId();
+    if(id==LOGOUT){
+      AVUser.logOut();
+      finish();
+    }
+    return super.onMenuItemSelected(featureId, item);
+  }
+
   private void initDrawmode() {
     curDrawMode = App.DRAW_RECT;
     RadioButton drawRectBtn = (RadioButton) findViewById(R.id.drawRectBtn);
@@ -182,6 +206,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     redoView = (ImageView) findViewById(R.id.redo);
     drawRectView = (DrawRectView) findViewById(R.id.drawRectView);
     drawBackBtn= (RadioButton) findViewById(R.id.drawBack);
+    upload=findViewById(R.id.upload);
     clear = findViewById(R.id.clear);
     dir = findViewById(R.id.dir);
     materialView = findViewById(R.id.material);
@@ -193,6 +218,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     redoView.setOnClickListener(this);
     clear.setOnClickListener(this);
     cameraView.setOnClickListener(this);
+    upload.setOnClickListener(this);
     initRadio();
   }
 
@@ -311,23 +337,17 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     } else if (id == R.id.redo) {
       drawView.redo();
     } else if (id == R.id.camera) {
-      takePhoto();
+      Utils.takePhoto(cxt,CAMERA_RESULT);
     } else if (id == R.id.material) {
       goMaterial();
+    }else if(id==R.id.upload){
+      com.lzw.commons.Utils.goActivity(cxt, PhotoActivity.class);
     }
   }
 
   private void goMaterial() {
     Intent intent = new Intent(this, MaterialActivity.class);
     startActivityForResult(intent, MATERIAL_RESULT);
-  }
-
-  private void takePhoto() {
-    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    Uri uri;
-    uri = getCameraUri();
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-    startActivityForResult(intent, CAMERA_RESULT);
   }
 
   private void showRecogFragment(Bitmap foreBitmap, Bitmap backBitmap) {
@@ -443,13 +463,6 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     showDrawFragment(curDrawMode);
   }
 
-  public Uri getCameraUri() {
-    Uri uri;
-    String path = PathUtils.getCameraPath();
-    uri = Uri.fromFile(new File(path));
-    return uri;
-  }
-
   public void ok(View v) {
     Utils.showImage(this, drawView.getCacheBm());
   }
@@ -498,7 +511,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
           }
           break;
         case CAMERA_RESULT:
-          setImageByUri(getCameraUri(), 0);
+          setImageByUri(Utils.getCameraUri(), 0);
           break;
         case CROP_RESULT:
           uri = Uri.fromFile(new File(cropPath));

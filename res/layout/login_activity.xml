@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_back"
+    android:orientation="vertical">
+
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/loginLayoutMarginTop"
+        android:layout_marginLeft="@dimen/loginLayoutMarginLeft"
+        android:layout_marginRight="@dimen/loginLayoutMarginLeft"
+        android:layout_marginTop="100dp"
+        android:hint="@string/pleaseInputName"
+        android:inputType="text"
+        android:padding="@dimen/loginPadding"
+        android:textColor="#000"
+        android:textCursorDrawable="@null"
+        android:textSize="@dimen/loginTextSize" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/loginLayoutMarginTop"
+        android:layout_marginLeft="@dimen/loginLayoutMarginLeft"
+        android:layout_marginRight="@dimen/loginLayoutMarginLeft"
+        android:layout_marginTop="@dimen/loginLayoutMarginTop"
+        android:hint="@string/pleaseInputPassword"
+        android:inputType="textPassword"
+        android:padding="@dimen/loginPadding"
+        android:textColor="#000"
+        android:textCursorDrawable="@null"
+        android:textSize="@dimen/loginTextSize" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/loginLayoutMarginTop"
+        android:layout_marginLeft="@dimen/loginLayoutMarginLeft"
+        android:layout_marginRight="@dimen/loginLayoutMarginLeft"
+        android:layout_marginTop="@dimen/loginLayoutMarginTop"
+        android:orientation="horizontal"
+        android:padding="@dimen/loginPadding">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/loginBtn"
+            android:onClick="login"
+            android:text="@string/login"
+            style="@style/btn_blue" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            style="@style/btn_blue"
+            android:onClick="register"
+            android:text="@string/register" />
+    </LinearLayout>
+
+</LinearLayout>

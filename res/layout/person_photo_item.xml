@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/space_bg_user_autumn"
+        android:scaleType="fitXY" />
+
+    <ImageView
+        android:layout_gravity="bottom|right|center"
+        android:id="@+id/delete"
+        android:background="@drawable/space_photos_btn_delete"
+        android:visibility="visible"
+        android:layout_width="61.799988dip"
+        android:layout_height="23.599976dip"
+        android:layout_margin="14.599976dip"
+        android:scaleType="centerCrop" />
+</FrameLayout>

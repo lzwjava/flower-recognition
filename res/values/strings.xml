@@ -16,6 +16,7 @@
     <string name="recog_flower">类似花卉</string>
     <string name="is_loading">加载中...</string>
     <string name="helpTip">有疑问随时点我:)</string>
+    <string name="empty_prompt">用户名和密码不能空哦</string>
     <string name="pleaseChooseOneFlower">请选一张心仪的图片</string>
     <string name="server_error">服务器错误</string>
     <string name="origin_flower">原花</string>
@@ -26,4 +27,35 @@
     <string name="splashText">花卉识别，从心开始</string>
     <string name="draw_flower_tips">画在花朵上</string>
     <string name="draw_back_tips">表示花朵周围的背景</string>
+
+    <string name="pleaseInputName">请输入数字或字母组成的用户名</string>
+    <string name="pleaseInputPassword">请输入数字或字母组成的密码</string>
+    <string name="remberPassword">记住密码</string>
+    <string name="login">登录</string>
+    <string name="find">查找</string>
+    <string name="register">注册</string>
+
+    <string name="border_top">Border Top</string>
+    <string name="border_bottom">Border Bottom</string>
+    <string name="image_url">image_url</string>
+    <string name="image_name">image_name</string>
+    <string name="username_prompt">请输入用户名</string>
+    <string name="password_prompt">请输入密码</string>
+    <string name="fail_login_tips">未联网或用户名密码错误</string>
+    <string name="login_succeed">登录成功</string>
+    <string name="register_prompt">请输入账号来注册</string>
+    <string name="have_been_registered">未联网或者用户名已被注册</string>
+    <string name="has_empty_char">不能用空的字符串</string>
+    <string name="has_wrong_char">有非法的字符</string>
+    <string name="pleaseInputName">请输入数字或字母组成的用户名</string>
+    <string name="pleaseInputPassword">请输入数字或字母组成的密码</string>
+    <string name="remberPassword">记住密码</string>
+    <string name="login">登录</string>
+    <string name="find">查找</string>
+    <string name="register">注册</string>
+    <string name="uploadPhotos">上传图片</string>
+    <string name="upload">上传</string>
+    <string name="fromGallery">图库</string>
+    <string name="takePhoto">拍照</string>
+
 </resources>

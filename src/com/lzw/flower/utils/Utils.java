@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -15,6 +17,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.lzw.flower.R;
+import com.lzw.flower.draw.DrawActivity;
+
+import java.io.File;
 
 /**
  * Created by lzw on 14-4-29.
@@ -92,6 +97,33 @@ public class Utils {
   }
 
   public static void toastNoNetwork(Context context) {
-    toast(context,R.string.no_network);
+    toast(context, R.string.no_network);
+  }
+
+  public static int getWindowWidth(Activity cxt) {
+    int width;
+    DisplayMetrics metrics = cxt.getResources().getDisplayMetrics();
+    width = metrics.widthPixels;
+    return width;
+  }
+
+  public static void goActivity(Activity activity, Class<?> nextActivity) {
+    Intent intent = new Intent(activity, nextActivity);
+    activity.startActivity(intent);
+  }
+
+  public static void takePhoto(Activity cxt,int reqCode) {
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    Uri uri;
+    uri = getCameraUri();
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+    cxt.startActivityForResult(intent, reqCode);
+  }
+
+  public static Uri getCameraUri() {
+    Uri uri;
+    String path = PathUtils.getCameraPath();
+    uri = Uri.fromFile(new File(path));
+    return uri;
   }
 }

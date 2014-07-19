@@ -19,4 +19,13 @@
     <dimen name="wiki">30dp</dimen>
     <dimen name="radioText">12sp</dimen>
     <dimen name="showViewWidth">400dp</dimen>
+
+
+    <dimen name="loginTextSize">15sp</dimen>
+    <dimen name="loginPadding">10dp</dimen>
+    <dimen name="loginLayoutMargin">10dp</dimen>
+    <dimen name="loginLayoutMarginLeft">30dp</dimen>
+    <dimen name="loginLayoutMarginTop">10dp</dimen>
+    <dimen name="little_radius">3dp</dimen>
+    <dimen name="radius">5dp</dimen>
 </resources>
