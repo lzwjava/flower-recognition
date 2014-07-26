@@ -71,7 +71,7 @@ public class PhotoActivity extends Activity implements View.OnClickListener {
         protected void doInBack() throws Exception {
           String path = PathUtils.getCameraPath();
           AVUser curUser = AVUser.getCurrentUser();
-          AVFile avFile = AVFile.withAbsoluteLocalPath(curUser.getUsername(), path);
+          AVFile avFile = AVFile.withAbsoluteLocalPath(curUser.getUsername()+".jpg", path);
           avFile.save();
           Photo photo = new Photo();
           photo.setPhoto(avFile);

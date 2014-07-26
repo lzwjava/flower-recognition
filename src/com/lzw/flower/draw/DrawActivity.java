@@ -57,7 +57,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   DrawView drawView;
   Bitmap originImg;
   public static DrawActivity instance;
-  View dir, clear, cameraView, materialView;
+  View dir, clear, cameraView, materialView,scale;
   ImageView undoView, redoView;
   View upload;
 
@@ -73,6 +73,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   int curDrawMode;
   RadioButton drawBackBtn;
   private Activity cxt;
+  Uri curPicUri;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
+        curPicUri=uri;
         Bitmap bitmap = null;
         try{
           if(uri!=null){
@@ -122,7 +124,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
             bitmap = Bitmap.createScaledBitmap(originBm, App.drawWidth, App.drawHeight, false);
             originBm.recycle();
           } else {
-            Crop.startPhotoCrop(DrawActivity.this, uri, cropPath, CROP_RESULT);
+            cropIt(uri);
             return;
           }
         }
@@ -144,6 +146,10 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         }
       }
     }, 500);
+  }
+
+  public void cropIt(Uri uri) {
+    Crop.startPhotoCrop(this, uri, cropPath, CROP_RESULT);
   }
 
   @Override
@@ -206,6 +212,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     redoView = (ImageView) findViewById(R.id.redo);
     drawRectView = (DrawRectView) findViewById(R.id.drawRectView);
     drawBackBtn= (RadioButton) findViewById(R.id.drawBack);
+    scale=findViewById(R.id.scale);
     upload=findViewById(R.id.upload);
     clear = findViewById(R.id.clear);
     dir = findViewById(R.id.dir);
@@ -215,6 +222,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     dir.setOnClickListener(this);
     materialView.setOnClickListener(this);
     undoView.setOnClickListener(this);
+    scale.setOnClickListener(this);
     redoView.setOnClickListener(this);
     clear.setOnClickListener(this);
     cameraView.setOnClickListener(this);
@@ -342,6 +350,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
       goMaterial();
     }else if(id==R.id.upload){
       com.lzw.commons.Utils.goActivity(cxt, PhotoActivity.class);
+    }else if(id==R.id.scale){
+      cropIt(curPicUri);
     }
   }
 
