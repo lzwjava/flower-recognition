@@ -1,4 +1,4 @@
-项目依赖请看 项目依赖.png
+![library](https://raw.githubusercontent.com/lzwjava/flower-recognition/master/%E9%A1%B9%E7%9B%AE%E4%BE%9D%E8%B5%96.png)
 
 avos的模块请到https://cn.avoscloud.com/docs/sdk_down.html下载，选择Android SDK，因为用了下崩溃日志统计功能。
 
