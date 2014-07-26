@@ -74,7 +74,7 @@ public class DrawView extends View {
     history.clear();
     path.reset();
     this.srcBitmap = srcBitmap;
-    cacheBm = srcBitmap;
+    cacheBm =com.lzw.commons.Utils.getCopyBitmap(srcBitmap) ;
     history.setSrcBitmap(cacheBm);
     history.saveToStack(path,paint);
     cacheCanvas.setBitmap(cacheBm);

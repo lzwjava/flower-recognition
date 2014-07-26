@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
+import com.lzw.commons.Utils;
 import com.lzw.flower.utils.ImageListDialogBuilder;
 
 import java.util.ArrayList;
@@ -54,14 +55,6 @@ public class History {
     }
   }
 
-  public Bitmap getCopyBitmap(Bitmap original) {
-    Bitmap copy = Bitmap.createBitmap(original.getWidth(),
-        original.getHeight(), original.getConfig());
-    Canvas copiedCanvas = new Canvas(copy);
-    copiedCanvas.drawBitmap(original, 0f, 0f, null);
-    return copy;
-  }
-
   @Override
   public String toString() {
     return "stack size=" + histroy.size() + " curPos=" + curPos;
@@ -70,7 +63,7 @@ public class History {
   public Bitmap getBitmapAtDraw(int n) {
     Log.d("lzw","get bitmap at "+n);
     Canvas canvas = new Canvas();
-    Bitmap bm = getCopyBitmap(srcBitmap);
+    Bitmap bm = Utils.getCopyBitmap(srcBitmap);
     canvas.setBitmap(bm);
     for (int i = 0; i <= n; i++) {
       Draw draw = histroy.get(i);
@@ -139,17 +132,13 @@ public class History {
 
   public Bitmap getHandBitmap() {
     Canvas canvas = new Canvas();
-    Bitmap bm =getEmptyBitmap(srcBitmap.getWidth(),srcBitmap.getHeight());
+    Bitmap bm = Utils.getEmptyBitmap(srcBitmap.getWidth(), srcBitmap.getHeight());
     canvas.setBitmap(bm);
     for (int i = 0; i <= curPos; i++) {
       Draw draw = histroy.get(i);
       canvas.drawPath(draw.path, draw.paint);
     }
     return bm;
-  }
-
-  public static Bitmap getEmptyBitmap(int w,int h) {
-    return Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
   }
 
   public interface CallBack {
