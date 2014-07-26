@@ -3,7 +3,9 @@ package com.lzw.flower.draw;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.util.Log;
 import com.lzw.flower.utils.ImageListDialogBuilder;
 
 import java.util.ArrayList;
@@ -14,31 +16,40 @@ import java.util.Stack;
  * Created by lzw on 14-4-29.
  */
 public class History {
-  Stack<Bitmap> histroy;
+  Stack<Draw> histroy;
   CallBack callBack;
   int curPos;
+  Bitmap srcBitmap;
 
   public History() {
-    histroy = new Stack<Bitmap>();
+    histroy = new Stack<Draw>();
     curPos = -1;
+  }
+
+  public void setSrcBitmap(Bitmap srcBitmap) {
+    this.srcBitmap = srcBitmap;
   }
 
   public void setCallBack(CallBack callBack) {
     this.callBack = callBack;
   }
 
-  public void saveToStack(Bitmap cacheBm) {
-    Bitmap original = cacheBm;
-    Bitmap copy = getCopyBitmap(original);
+  public void saveToStack(Path path,Paint paint){
+    Draw draw=new Draw();
+    draw.path=new Path(path);
+    draw.paint=new Paint(paint);
+    saveToStack(draw);
+  }
 
-    Bitmap bm =copy;
+  public void saveToStack(Draw draw) {
     curPos++;
     while (histroy.size() > curPos) {
       histroy.pop();
     }
     //showStack(DrawActivity.instance);
-    histroy.push(bm);
-    if(callBack!=null){
+    histroy.push(draw);
+    Log.d("lzw",toString()+"");
+    if (callBack != null) {
       callBack.onHistoryChanged();
     }
   }
@@ -56,13 +67,24 @@ public class History {
     return "stack size=" + histroy.size() + " curPos=" + curPos;
   }
 
+  public Bitmap getBitmapAtDraw(int n) {
+    Log.d("lzw","get bitmap at "+n);
+    Canvas canvas = new Canvas();
+    Bitmap bm = getCopyBitmap(srcBitmap);
+    canvas.setBitmap(bm);
+    for (int i = 0; i <= n; i++) {
+      Draw draw = histroy.get(i);
+      canvas.drawPath(draw.path, draw.paint);
+    }
+    return bm;
+  }
+
   public void showStack(Context cxt) {
     ImageListDialogBuilder builder = new ImageListDialogBuilder(cxt);
     List<Bitmap> imgs = new ArrayList<Bitmap>();
     int n = histroy.size();
     for (int i = 0; i < n; i++) {
-      Bitmap bm = histroy.get(n - 1 - i);
-      imgs.add(bm);
+      imgs.add(getBitmapAtDraw(n - 1 - i));
     }
     builder.setImgs(imgs).show();
   }
@@ -70,11 +92,11 @@ public class History {
   public Bitmap undo() throws UnsupportedOperationException {
     if (canUndo()) {
       curPos--;
-      if(callBack!=null){
+      if (callBack != null) {
         callBack.onHistoryChanged();
       }
-      Bitmap bitmap = histroy.get(curPos);
-      return getCopyBitmap(bitmap);
+      Bitmap bitmap = getBitmapAtDraw(curPos);
+      return bitmap;
     } else {
       throw new UnsupportedOperationException("don't have undo record");
     }
@@ -83,11 +105,11 @@ public class History {
   public Bitmap redo() throws UnsupportedOperationException {
     if (canRedo()) {
       curPos++;
-      if(callBack!=null){
+      if (callBack != null) {
         callBack.onHistoryChanged();
       }
-      Bitmap bitmap = histroy.get(curPos);
-      return getCopyBitmap(bitmap);
+      Bitmap bitmap = getBitmapAtDraw(curPos);
+      return bitmap;
     } else {
       throw new UnsupportedOperationException("don't have redo record");
     }
@@ -111,11 +133,26 @@ public class History {
   }
 
   public void clear() {
-    curPos=-1;
+    curPos = -1;
     histroy.clear();
   }
 
-  public interface CallBack{
+  public Bitmap getHandBitmap() {
+    Canvas canvas = new Canvas();
+    Bitmap bm =getEmptyBitmap(srcBitmap.getWidth(),srcBitmap.getHeight());
+    canvas.setBitmap(bm);
+    for (int i = 0; i <= curPos; i++) {
+      Draw draw = histroy.get(i);
+      canvas.drawPath(draw.path, draw.paint);
+    }
+    return bm;
+  }
+
+  public static Bitmap getEmptyBitmap(int w,int h) {
+    return Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+  }
+
+  public interface CallBack {
     void onHistoryChanged();
   }
 }

@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,10 +28,6 @@ import com.lzw.flower.fragment.WaitFragment;
 import com.lzw.flower.material.MaterialActivity;
 import com.lzw.flower.result.ResultActivity;
 import com.lzw.flower.utils.*;
-import com.lzw.flower.utils.BitmapUtils;
-import com.lzw.flower.utils.Logger;
-import com.lzw.flower.utils.PathUtils;
-import com.lzw.flower.utils.Utils;
 import com.lzw.flower.web.UploadImage;
 import com.lzw.flower.web.Web;
 import org.json.JSONObject;
@@ -53,11 +48,10 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   public static final int LOGOUT = 0;
   String baseUrl;
 
-  ImageView originView;
   DrawView drawView;
   Bitmap originImg;
   public static DrawActivity instance;
-  View dir, clear, cameraView, materialView,scale;
+  View dir, clear, cameraView, materialView, scale;
   ImageView undoView, redoView;
   View upload;
 
@@ -67,7 +61,6 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   int curFragmentId = -1;
   int serverId = -1;
   private Bitmap resultBitmap;
-  DrawRectView drawRectView;
   private RadioGroup radioGroup;
   Fragment curFragment;
   int curDrawMode;
@@ -79,7 +72,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     instance = this;
-    cxt=this;
+    cxt = this;
     cropPath = PathUtils.getCropPath();
     setContentView(R.layout.draw_layout);
     findView();
@@ -97,18 +90,18 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     initDrawmode();
   }
 
-  private void setImageByUri(final Uri uri, final float angle) {
+  private void setImageByUri(final Uri uri) {
     new Handler().postDelayed(new Runnable() {
       @Override
       public void run() {
-        curPicUri=uri;
+        curPicUri = uri;
         Bitmap bitmap = null;
-        try{
-          if(uri!=null){
+        try {
+          if (uri != null) {
             String path = uri.getPath();
-            bitmap= BitmapUtils.getBitmapByUri(DrawActivity.this,uri);
+            bitmap = BitmapUtils.getBitmapByUri(DrawActivity.this, uri);
           }
-        }catch (Exception e){
+        } catch (Exception e) {
           e.printStackTrace();
         }
 
@@ -118,8 +111,8 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         if (originW != App.drawWidth || originH != App.drawHeight) {
           float originRadio = originW * 1.0f / originH;
           float radio = App.drawWidth * 1.0f / App.drawHeight;
-          if (Math.abs(originRadio-radio)<0.01) {
-            Bitmap originBm=bitmap;
+          if (Math.abs(originRadio - radio) < 0.01) {
+            Bitmap originBm = bitmap;
             Logger.d("create bitmap");
             bitmap = Bitmap.createScaledBitmap(originBm, App.drawWidth, App.drawHeight, false);
             originBm.recycle();
@@ -132,15 +125,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         imageLoader.addOrReplaceToMemoryCache("origin", bitmap);
         originImg = bitmap;
         serverId = -1;
-        originView.setImageBitmap(bitmap);
-        int w = originView.getWidth();
-        int h = originView.getHeight();
-        Logger.d("imageview w=%d h=%d", w, h);
+
         Logger.d("origin w=%d h=%d", originImg.getWidth(), originImg.getHeight());
-        drawView.setOriginBitmap(originImg, originView);
         Logger.d("drawview w=%d h=%d", drawView.getWidth(), drawView.getHeight());
-        curDrawMode = App.DRAW_RECT;
+        drawView.setSrcBitmap(originImg);
         showDrawFragment(App.ALL_INFO);
+        curDrawMode = App.DRAW_FORE;
         if (App.debug) {
           //goResult();
         }
@@ -154,14 +144,14 @@ public class DrawActivity extends Activity implements View.OnClickListener {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add(0, LOGOUT,0,R.string.logOut);
+    menu.add(0, LOGOUT, 0, R.string.logOut);
     return super.onCreateOptionsMenu(menu);
   }
 
   @Override
   public boolean onMenuItemSelected(int featureId, MenuItem item) {
-    int id=item.getItemId();
-    if(id==LOGOUT){
+    int id = item.getItemId();
+    if (id == LOGOUT) {
       AVUser.logOut();
       finish();
     }
@@ -169,9 +159,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   private void initDrawmode() {
-    curDrawMode = App.DRAW_RECT;
-    RadioButton drawRectBtn = (RadioButton) findViewById(R.id.drawRectBtn);
-    drawRectBtn.setChecked(true);
+    curDrawMode = App.DRAW_FORE;
   }
 
   private void initOriginImage() {
@@ -179,7 +167,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     String imgPath = PathUtils.getCameraPath();
     BitmapUtils.saveBitmapToPath(bitmap, imgPath);
     Uri uri1 = Uri.fromFile(new File(imgPath));
-    setImageByUri(uri1, 0);
+    setImageByUri(uri1);
   }
 
   private void setIp() {
@@ -206,14 +194,11 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   private void findView() {
-    originView = (ImageView) findViewById(R.id.img);
     drawView = (DrawView) findViewById(R.id.drawView);
     undoView = (ImageView) findViewById(R.id.undo);
     redoView = (ImageView) findViewById(R.id.redo);
-    drawRectView = (DrawRectView) findViewById(R.id.drawRectView);
-    drawBackBtn= (RadioButton) findViewById(R.id.drawBack);
-    scale=findViewById(R.id.scale);
-    upload=findViewById(R.id.upload);
+    scale = findViewById(R.id.scale);
+    upload = findViewById(R.id.upload);
     clear = findViewById(R.id.clear);
     dir = findViewById(R.id.dir);
     materialView = findViewById(R.id.material);
@@ -241,24 +226,15 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     public void onCheckedChanged(RadioGroup group, int id) {
       if (id == R.id.drawBack) {
         drawView.drawBack();
-        drawRectView.setDraw(false);
-        drawView.setVisibility(View.VISIBLE);
+        drawView.setScaleMode(false);
         curDrawMode = App.DRAW_BACK;
       } else if (id == R.id.drawFore) {
         drawView.drawFore();
+        drawView.setScaleMode(false);
         drawView.setVisibility(View.VISIBLE);
         curDrawMode = App.DRAW_FORE;
-      } else if (id == R.id.drawRectBtn) {
-        curDrawMode = App.DRAW_RECT;
-        clearEverything();
-        drawView.setVisibility(View.GONE);
-        drawRectView.setDraw(true);
-        drawRectView.setOnFinishListener(new DrawRectView.OnFinishListener() {
-          @Override
-          public void onFinish(Rect rect) {
-            drawBackBtn.setChecked(true);
-          }
-        });
+      }else if(id==R.id.scaleBtn){
+        drawView.setScaleMode(true);
       }
       updateDrawFragmentByMode();
     }
@@ -293,9 +269,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
 
   private void setSize() {
     setSizeByResourceSize();
-    setViewSize(originView);
     setViewSize(drawView);
-    setViewSize(drawRectView);
   }
 
   private void setSizeByResourceSize() {
@@ -345,12 +319,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     } else if (id == R.id.redo) {
       drawView.redo();
     } else if (id == R.id.camera) {
-      Utils.takePhoto(cxt,CAMERA_RESULT);
+      Utils.takePhoto(cxt, CAMERA_RESULT);
     } else if (id == R.id.material) {
       goMaterial();
-    }else if(id==R.id.upload){
+    } else if (id == R.id.upload) {
       com.lzw.commons.Utils.goActivity(cxt, PhotoActivity.class);
-    }else if(id==R.id.scale){
+    } else if (id == R.id.scale) {
       cropIt(curPicUri);
     }
   }
@@ -369,16 +343,15 @@ public class DrawActivity extends Activity implements View.OnClickListener {
   }
 
   public void clearEverything() {
-    drawView.clear();
-    originView.setImageBitmap(originImg);
-    drawRectView.clear();
-    curDrawMode = App.DRAW_RECT;
+    if (curPicUri != null) {
+      setImageByUri(curPicUri);
+    }
     showDrawFragment(curDrawMode);
   }
 
   public void saveBitmap() {
-    Bitmap handBitmap = drawView.getCacheBm();
-    Bitmap originBitmap = drawView.getOriginBitmap();
+    Bitmap handBitmap = drawView.getHandBitmap();
+    Bitmap originBitmap = drawView.getSrcBitmap();
     //showDrawPicture(handBitmap,originBitmap);
     saveBitmapToFileAndUpload(handBitmap, originBitmap);
   }
@@ -407,7 +380,7 @@ public class DrawActivity extends Activity implements View.OnClickListener {
             throw new Exception("baseUrl is null");
           }
           String jsonRes = UploadImage.upload(baseUrl, serverId, Web.STATUS_CONTINUE,
-              originPath, handPath, drawRectView.getRect(), false);
+              originPath, handPath, null, false);
           getJsonData(jsonRes);
           res = true;
         } catch (Exception e) {
@@ -436,17 +409,12 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         if (res) {
           Logger.d("lzw", "get json ok then show recogFragment");
           showRecogFragment(foreBitmap, backBitmap);
-          replaceBitmap();
         } else {
           Utils.toast(DrawActivity.this, R.string.server_error);
           recogNo();
         }
       }
     }.execute();
-  }
-
-  private void replaceBitmap() {
-    originView.setImageBitmap(resultBitmap);
   }
 
   private void showWaitFragment() {
@@ -517,22 +485,20 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         case IMAGE_RESULT:
           if (data != null) {
             Uri data1 = data.getData();
-            setImageByUri(data1, 0);
+            setImageByUri(data1);
           }
           break;
         case CAMERA_RESULT:
-          setImageByUri(Utils.getCameraUri(), 0);
+          setImageByUri(Utils.getCameraUri());
           break;
         case CROP_RESULT:
           uri = Uri.fromFile(new File(cropPath));
-          setImageByUri(uri, 0);
+          setImageByUri(uri);
           break;
         case MATERIAL_RESULT:
           uri = data.getData();
-          setImageByUri(uri, 0);
+          setImageByUri(uri);
       }
     }
   }
-
-
 }

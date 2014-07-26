@@ -12,7 +12,6 @@ import com.lzw.flower.avobject.Photo;
 public class App extends Application {
   public static final int DRAW_BACK = 0;
   public static final int DRAW_FORE = 1;
-  public static final int DRAW_RECT = 2;
   public static final int ALL_INFO = 3;
   public static boolean debug = false;
   public static String json = "{     \"valid\" : true, \t\"images\": [ \t{ \"typeName\": \"牡丹\", " +

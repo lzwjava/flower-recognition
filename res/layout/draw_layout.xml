@@ -142,13 +142,12 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical">
 
-
                     <RadioButton
-                        android:id="@+id/drawRectBtn"
+                        android:id="@+id/scaleBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/radioText"
-                        android:drawableLeft="@drawable/rect" />
+                        android:drawableLeft="@drawable/scale" />
 
                     <RadioButton
                         android:id="@+id/drawBack"
@@ -175,21 +174,6 @@
                 android:background="@drawable/card_background_white"
                 android:padding="10dp"
                 android:layout_margin="10dp">
-
-                <ImageView
-                    android:id="@+id/img"
-                    android:layout_width="@dimen/draw_width"
-                    android:layout_height="@dimen/draw_height"
-                    android:src="@drawable/flower_b"
-                    android:layout_gravity="center"
-                    android:scaleType="fitCenter" />
-
-
-                <com.lzw.flower.draw.DrawRectView
-                    android:id="@+id/drawRectView"
-                    android:layout_width="@dimen/draw_width"
-                    android:layout_height="@dimen/draw_height"
-                    android:layout_gravity="center" />
 
                 <com.lzw.flower.draw.DrawView
                     android:id="@+id/drawView"

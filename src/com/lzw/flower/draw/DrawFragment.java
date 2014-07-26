@@ -40,8 +40,6 @@ public class DrawFragment extends Fragment {
       appendBlue();
     }else if(infoId== App.DRAW_FORE){
       appendRed();
-    }else if(infoId== App.DRAW_RECT){
-      appendRect();
     }else if(infoId==App.ALL_INFO){
       appendAll();
     }
@@ -51,10 +49,6 @@ public class DrawFragment extends Fragment {
     appendAllText(R.drawable.red, R.string.draw_flower_tips);
   }
 
-  private void appendRect(){
-    appendAllText(R.drawable.rect, R.string.drawRectTips);
-  }
-
   private void appendBlue() {
     int imgId = R.drawable.blue;
     int txtId = R.string.draw_back_tips;
@@ -62,7 +56,6 @@ public class DrawFragment extends Fragment {
   }
 
   public void appendAll(){
-    appendRect();
     infoView.append("\n");
     appendBlue();
     infoView.append("\n");
